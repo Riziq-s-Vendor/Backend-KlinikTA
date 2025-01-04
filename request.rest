@@ -1,0 +1,64 @@
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlhNTJjMzY4LWQ0ZGEtNDAxMC1hNTM4LWRmZGM1ODBhYmFkYSIsInVzZXJOYW1lIjoiQWRtaW4xIiwicGFzc3dvcmQiOiJBZG1pbjEyMyEiLCJjcmVhdGVkQXQiOiIyMDI1LTAxLTA0VDEzOjIzOjE4LjU3MloiLCJpYXQiOjE3MzU5OTcwMDYsImV4cCI6MTczODU4OTAwNn0.Vp8-rVmvqkCYpFUl--HX_vjMB9MqZ5bzOcTAeB86lfQ
+
+###
+GET http://localhost:5000/api/v1/seeder/userSeeder
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+POST  http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{     "userName"    : "Admin1",
+       "password" : "Admin123!"
+}
+
+###
+get  http://localhost:5000/api/v1/userManagementAdmin/getUser
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+###
+get  http://localhost:5000/api/v1//userManagementAdmin/getUserById/9a52c368-d4da-4010-a538-dfdc580abada
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+POST  http://localhost:5000/api/v1//userManagementAdmin/createUser
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+{     
+       "userName"    : "Admin2",
+       "password" : "Admin123!",
+       "role" : "ADMIN"
+}
+
+###
+POST  http://localhost:5000/api/v1//userManagementAdmin/updateUserById/ac9e6d92-7463-476a-984e-36dc233f0292
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+{     
+       "userName"    : "Admin3",
+       "password" : "Admin123!",
+       "role" : "DOKTER"
+
+}
+
+###
+POST  http://localhost:5000/api/v1/userManagementAdmin/deleteUser/dc221ddc-fff8-4bdb-93af-94e610bd379a
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+{     
+       "userName"    : "Admin1",
+       "password"    : "Admin123!"
+}
+
