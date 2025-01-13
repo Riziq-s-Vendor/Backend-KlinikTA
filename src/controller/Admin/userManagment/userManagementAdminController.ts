@@ -131,7 +131,7 @@ export const updateUser = async (req : Request, res: Response) =>{
         .minOfLowercase(1)
         .minOfUppercase(1)
         .noWhiteSpaces()
-        .required(),
+        .optional(),
         role : Joi.string().optional()
     }).validate(input);
 
