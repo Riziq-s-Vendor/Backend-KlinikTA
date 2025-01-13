@@ -56,8 +56,96 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
-{     
-       "userName"    : "Admin1",
-       "password"    : "Admin123!"
+
+
+
+
+
+
+
+
+###
+get  http://localhost:5000/api/v1/pasienManagement/getPasien
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+###
+get  http://localhost:5000/api/v1//pasienManagement/getPasienById/8ad6d9d4-a52c-44c4-845e-bb6ae5600311
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+POST  http://localhost:5000/api/v1//pasienManagement/createPasien
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+{
+    "namaPasien": "John Doe",
+    "jenisKelamin": "Laki-laki",
+    "tanggalLahir": "1985-06-15",
+    "tempatLahir": "Jakarta",
+    "agama": "Islam",
+    "noTelp": "081234567890",
+    "BPJS": "1234567890123",
+    "alamat": "Jl. Mawar No. 123, Jakarta",
+    "noUrut": 1,
+    "poliklinik": "Umum",
+    "namaDoktor": "Dr. Ahmad",
+    "petugasAnalisis": "Siti Nurhayati",
+    "tanggalEntry": "2024-01-14",
+    "jumlahLengkap": "10",
+    "jumlahTidakLengkap": "2",
+    "presentase": "83.33%",
+    "keterangan": "Lengkap",
+    "tanggalBerobat": "2024-01-14",
+    "riwayatKeshatan": "Tidak ada riwayat penyakit kronis",
+    "pemeriksaanFisik": "Normal",
+    "pengkajianDokter": "Pasien dalam kondisi stabil",
+    "diagnosa": "Sehat",
+    "TTDDokter": "Dr. Ahmad"
 }
+
+
+###
+PUT  http://localhost:5000/api/v1//pasienManagement/updatePasienById/a1295d02-39d7-41fb-beb8-bbfbeb83abf6
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+{
+    "namaPasien": "John Doe2",
+    "jenisKelamin": "Laki-laki",
+    "tanggalLahir": "1985-06-15",
+    "tempatLahir": "Jakarta2",
+    "agama": "Islam2",
+    "noTelp": "0812345678902",
+    "BPJS": "12345678901232",
+    "alamat": "Jl. Mawar No. 123, Jakarta2",
+    "noUrut": 11,
+    "poliklinik": "Umum1",
+    "namaDoktor": "Dr. Ahmad2",
+    "petugasAnalisis": "Siti Nurhayati2",
+    "tanggalEntry": "2024-01-142",
+    "jumlahLengkap": "102",
+    "jumlahTidakLengkap": "22",
+    "presentase": "83.332%",
+    "keterangan": "Lengkap2",
+    "tanggalBerobat": "2024-01-16",
+    "riwayatKeshatan": "Tidak ada riwayat penyakit kronis2",
+    "pemeriksaanFisik": "Normal2",
+    "pengkajianDokter": "Pasien dalam kondisi stabil2",
+    "diagnosa": "Sehat2",
+    "TTDDokter": "Dr. Ahmad2"
+}
+
+###
+DELETE   http://localhost:5000/api/v1/pasienManagement/deletePasien/42e5a36c-c6bd-42db-8be5-3742e2bea5f6
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
 
