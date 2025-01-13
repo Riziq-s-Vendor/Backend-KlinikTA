@@ -1,4 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU4NWVjODdlLWI2OGMtNDRlYi1hYzUyLTVhMWUzODRhNjY2NiIsInVzZXJOYW1lIjoiQWRtaW4xIiwicGFzc3dvcmQiOiJBZG1pbjEyMyEiLCJjcmVhdGVkQXQiOiIyMDI1LTAxLTEzVDE0OjA4OjExLjI0NloiLCJpYXQiOjE3MzY3NzcyOTMsImV4cCI6MTczOTM2OTI5M30.gUZsTsqQqW1h8sg87EQVwaiKozWZpmJcZVIAWA78Bxs
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUxYmYxYzY2LWExN2MtNDU3ZC05NmY1LTRiN2M4ZjJkYjJmMSIsInVzZXJOYW1lIjoiQWRtaW4xIiwicGFzc3dvcmQiOiIkMmEkMDgkZHNJZmRha29ydktkblpoRkNZYnhuT3ZPenNReXZINXJSay80L1Q5RGt0NzkvRFg4Mi5rd3kiLCJjcmVhdGVkQXQiOiIyMDI1LTAxLTEzVDIwOjUyOjE2LjU3MVoiLCJpYXQiOjE3MzY4MDIxODUsImV4cCI6MTczOTM5NDE4NX0.EqgvUNyCc-sRNUyadvJv_G4R7wmMSU9xPZ-QenCiOfo
 ###
 GET http://localhost:5000/api/v1/seeder/userSeeder
 Content-Type: application/json
@@ -32,9 +32,9 @@ Authorization: Bearer {{token}}
 
 
 {     
-       "userName"    : "Admin2",
-       "password" : "Admin123!",
-       "role" : "ADMIN"
+          "userName"    : "Petugas1",
+       "password" : "Petugas123!",
+       "role" : "PETUGAS"
 }
 
 ###
@@ -44,9 +44,9 @@ Authorization: Bearer {{token}}
 
 
 {     
-       "userName"    : "Admin3",
-       "password" : "Admin123!",
-       "role" : "DOKTER"
+       "userName"    : "Petugas1",
+       "password" : "Petugas123!",
+       "role" : "PETUGAS"
 
 }
 
