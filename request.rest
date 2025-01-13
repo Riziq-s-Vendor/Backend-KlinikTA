@@ -1,5 +1,4 @@
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjlhNTJjMzY4LWQ0ZGEtNDAxMC1hNTM4LWRmZGM1ODBhYmFkYSIsInVzZXJOYW1lIjoiQWRtaW4xIiwicGFzc3dvcmQiOiJBZG1pbjEyMyEiLCJjcmVhdGVkQXQiOiIyMDI1LTAxLTA0VDEzOjIzOjE4LjU3MloiLCJpYXQiOjE3MzU5OTcwMDYsImV4cCI6MTczODU4OTAwNn0.Vp8-rVmvqkCYpFUl--HX_vjMB9MqZ5bzOcTAeB86lfQ
-
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU4NWVjODdlLWI2OGMtNDRlYi1hYzUyLTVhMWUzODRhNjY2NiIsInVzZXJOYW1lIjoiQWRtaW4xIiwicGFzc3dvcmQiOiJBZG1pbjEyMyEiLCJjcmVhdGVkQXQiOiIyMDI1LTAxLTEzVDE0OjA4OjExLjI0NloiLCJpYXQiOjE3MzY3NzcyOTMsImV4cCI6MTczOTM2OTI5M30.gUZsTsqQqW1h8sg87EQVwaiKozWZpmJcZVIAWA78Bxs
 ###
 GET http://localhost:5000/api/v1/seeder/userSeeder
 Content-Type: application/json
@@ -21,7 +20,7 @@ Authorization: Bearer {{token}}
 
 
 ###
-get  http://localhost:5000/api/v1//userManagementAdmin/getUserById/9a52c368-d4da-4010-a538-dfdc580abada
+get  http://localhost:5000/api/v1//userManagementAdmin/getUserById/9f1014f4-387c-4056-be39-12bcca5abbdd
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -39,7 +38,7 @@ Authorization: Bearer {{token}}
 }
 
 ###
-POST  http://localhost:5000/api/v1//userManagementAdmin/updateUserById/ac9e6d92-7463-476a-984e-36dc233f0292
+PUT  http://localhost:5000/api/v1//userManagementAdmin/updateUserById/9f1014f4-387c-4056-be39-12bcca5abbdd
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
