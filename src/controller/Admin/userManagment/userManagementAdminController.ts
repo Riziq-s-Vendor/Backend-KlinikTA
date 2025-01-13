@@ -56,21 +56,20 @@ export const getUser = async(req : Request, res: Response) =>{
 
 export const getUserById =  async (req : Request, res : Response) =>{
     try{
+        const id = req.params.id;
+
         
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
         if (!userAcces) {
             return res.status(200).send(successResponse('Add Event is Not Authorized', { data: userAcces }))
         }
+        const user = await userRepository.findOne({
+            where: { id : id },
+        });
 
-        const id = req.params.id;
-        const user = await userRepository
-        .createQueryBuilder("user")
-        .getOne();
-
-        
         if (!user) {
-            return res.status(404).send(errorResponse("User not found", 404));
+            return res.status(404).json({ msg: 'Penduduk tidak ditemukan' });
         }
 
         return res.status(200).send(successResponse("Get User by ID Success", { data: user }, 200));
@@ -125,7 +124,7 @@ export const createUser = async (req : Request, res: Response) =>{
 
 export const updateUser = async (req : Request, res: Response) =>{
     const updateUserSchema = (input) => Joi.object({
-        userName : Joi.string().required(),
+        userName : Joi.string().optional(),
         password : joiPassword
         .string()
         .minOfSpecialCharacters(1)
@@ -133,7 +132,7 @@ export const updateUser = async (req : Request, res: Response) =>{
         .minOfUppercase(1)
         .noWhiteSpaces()
         .required(),
-        role : Joi.string().required()
+        role : Joi.string().optional()
     }).validate(input);
 
     try {
