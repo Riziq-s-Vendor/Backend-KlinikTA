@@ -11,7 +11,7 @@ const userRepository = AppDataSource.getRepository(User)
 
 export const userSeeder = async (req: Request, res: Response) => {
     const user = [
-        {userName : "Admin1",password : "Admin123!",UserRole : "ADMIN"},
+        {userName : "Admin2",password : "Admin123!",UserRole : "ADMIN"},
     ];
     try{
         for (const data of user){

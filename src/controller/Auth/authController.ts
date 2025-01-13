@@ -3,6 +3,7 @@ import { User } from "../../model/User";
 import { AppDataSource } from "../../data-source";
 import { JwtPayload } from "../../types/JwtPayload";
 import { createJwtToken } from "../../utils/createJwtToken";
+import bcrypt from 'bcryptjs';
 
 const { successResponse, errorResponse, validationResponse } = require('../../utils/response')
 
@@ -28,7 +29,6 @@ export const login = async (req: Request, res: Response) => {
         const user = await userRepository.findOne({
             where: {
                 userName: userName,
-                password : password
             }
         })
 
@@ -36,6 +36,12 @@ export const login = async (req: Request, res: Response) => {
             return res.status(409).send(errorResponse('Incorect userName or password ', 409))
         }
 
+
+              // Verifikasi password
+              const isPasswordValid = await bcrypt.compare(password, user.password);
+              if (!isPasswordValid) {
+                  return res.status(409).send(errorResponse('Incorrect userName or password', 409));
+              }
 
 
         const jwtPayload: JwtPayload = {
