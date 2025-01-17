@@ -15,6 +15,15 @@ export class User{
     @PrimaryGeneratedColumn('uuid')
     public id : string
 
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public namLengkap: string
+
+
     @Column({
         default: null,
         nullable: true
@@ -30,7 +39,6 @@ export class User{
     public password: string
 
 
-
     @Column({
         type: 'enum',
         enum: UserRole,
@@ -38,6 +46,13 @@ export class User{
     @IsString()
     @IsUppercase()
     public role: UserRole
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public eTTD: string
     
 
     @CreateDateColumn()
