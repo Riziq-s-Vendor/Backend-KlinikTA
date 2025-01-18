@@ -21,7 +21,7 @@ export class User{
         nullable: true
     })
     @IsString()
-    public namLengkap: string
+    public namaLengkap: string
 
 
     @Column({
@@ -53,6 +53,13 @@ export class User{
     })
     @IsString()
     public eTTD: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public noTelp: string
     
 
     @CreateDateColumn()
