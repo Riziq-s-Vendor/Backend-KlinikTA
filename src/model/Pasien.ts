@@ -23,6 +23,13 @@ export class Pasien{
         nullable: true
     })
     @IsString()
+    public namaPasien: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
     public namaLengkap: string
 
     @Column({

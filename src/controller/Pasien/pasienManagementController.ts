@@ -18,87 +18,122 @@ const pasienRepository = AppDataSource.getRepository(Pasien);
 
 const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 
-export const getPasien = async(req : Request, res: Response) =>{
-    try{
-        const {limit: queryLimit, page: page,namaPasien} = req.query
-     
-
-        const queryBuilder = riwayatPasienRepository.createQueryBuilder('RiwayatPasiens')
-        .leftJoinAndSelect('RiwayatPasiens.Pasiens', 'Pasien') 
-        .orderBy('RiwayatPasiens.createdAt', 'DESC'); 
-
-
-        if (namaPasien){
-            queryBuilder.where('Pasien.namaPasien LIKE :namaPasien', {
-                namaPasien: `%${namaPasien}%`
-            })
+export const getPasien = async (req: Request, res: Response) => {    
+    try {    
+        const { limit: queryLimit, page: page, namaPasien } = req.query;    
     
-        }
-
-        const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
-
-        if (!userAcces) {
-            return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }))
-        }
-
+        const queryBuilder = pasienRepository.createQueryBuilder('Pasien')    
+            .orderBy('Pasien.createdAt', 'DESC');    
     
-    const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;
-    const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1
-    const skip = (currentPage - 1) * (dynamicLimit || 0);
-
-    const [data, totalCount] = await queryBuilder
-    .skip(skip)
-    .take(dynamicLimit || undefined)
-    .getManyAndCount();
-
-
-    return res.status(200).send(successResponse('Get Pasien succes',
-    { 
-
-    data, 
-    totalCount,
-    currentPage,
-    totalPages: Math.ceil(totalCount / (dynamicLimit || 1)), }, 200))
+        if (namaPasien) {    
+            queryBuilder.where('Pasien.namaPasien LIKE :namaPasien', {    
+                namaPasien: `%${namaPasien}%`    
+            });    
+        }    
     
-    }catch(error){
-        res.status(500).json({ msg: error.message })    
-    }
-}
+        const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id });    
+    
+        if (!userAcces) {    
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }));    
+        }    
+    
+        const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;    
+        const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1    
+        const skip = (currentPage - 1) * (dynamicLimit || 0);    
+    
+        const [data, totalCount] = await queryBuilder    
+            .skip(skip)    
+            .take(dynamicLimit || undefined)    
+            .getManyAndCount();    
+    
+        const modifiedData = data.map((pasien) => {      
+            const { tempatLahir, tanggalLahir, kelurahan_desa, kecamatan, kabupaten, ...rest } = pasien; // Destructuring untuk menghapus properti yang tidak diinginkan  
+              
+            // Format tanggal  
+            const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };  
+            const formattedDate = new Date(tanggalLahir).toLocaleDateString('id-ID', options); // Format sesuai dengan locale Indonesia  
+  
+            // Mengubah format tanggal menjadi "18 November 2000"  
+            const [day, month, year] = formattedDate.split(' ');  
+            const formattedTTL = `${day} ${month.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
+  
+            return {      
+                ...rest,    
+                TTL: `${tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
+                alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`,      
+            };      
+        });    
+    
+        return res.status(200).send(successResponse('Get Pasien Success', {    
+            data: modifiedData,    
+            totalCount,    
+            currentPage,    
+            totalPages: Math.ceil(totalCount / (dynamicLimit || 1)),    
+        }, 200));    
+    
+    } catch (error) {    
+        res.status(500).json({ msg: error.message });    
+    }    
+}  
 
-export const getPasienById =  async (req : Request, res : Response) =>{
-    try{
-        const id = req.params.id;
 
-        
-        const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
-        if (!userAcces) {
-            return res.status(200).send(successResponse('user is Not Authorized', { data: userAcces }))
-        }
-        const pasien = await riwayatPasienRepository.findOne({
-            where: { id : id },
-            relations : ['Pasiens']
-        });
+export const getPasienById = async (req: Request, res: Response) => {    
+    try {    
+        const id = req.params.id;    
+    
+        const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id });    
+    
+        if (!userAcces) {    
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }));    
+        }    
+    
+        // Mengambil data pasien berdasarkan ID    
+        const pasien = await pasienRepository.findOne({    
+            where: { id: id }    
+        });    
+    
+        if (!pasien) {    
+            return res.status(404).json({ msg: 'Pasien tidak ditemukan' });    
+        }    
+    
+        // Modifikasi data untuk menggabungkan TTL dan alamat    
+        const { tempatLahir, tanggalLahir, kelurahan_desa, kecamatan, kabupaten, ...rest } = pasien; // Destructuring untuk menghapus properti yang tidak diinginkan  
+          
+        // Format tanggal  
+        const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };  
+        const formattedDate = new Date(tanggalLahir).toLocaleDateString('id-ID', options); // Format sesuai dengan locale Indonesia  
+  
+        // Mengubah format tanggal menjadi "18 November 2000"  
+        const [day, month, year] = formattedDate.split(' ');  
+        const formattedTTL = `${day} ${month.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
+  
+        const modifiedPasien = {    
+            ...rest,  
+            TTL: `${tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
+            alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`,    
+        };    
+    
+        return res.status(200).send(successResponse("Get Pasien by ID Success", { data: modifiedPasien }, 200));    
+    
+    } catch (error) {    
+        res.status(500).json({ msg: error.message });    
+    }    
+}  
 
-        if (!pasien) {
-            return res.status(404).json({ msg: 'Riwayat Pasien tidak ditemukan' });
-        }
+ 
 
-        return res.status(200).send(successResponse("Get Riwayat Pasien by ID Success", { data: pasien }, 200));
 
-    }catch(error){
-        res.status(500).json({ msg: error.message })
-    }
-}
 
 export const createPasien = async (req: Request, res: Response) => {
     const createPasienSchema = (input) => Joi.object({
         namaPasien: Joi.string().required(),
         namaLengkap: Joi.string().required(),
         jenisKelamin: Joi.string().required(),
-        tanggalLahir: Joi.string().required(),
+        tanggalLahir: Joi.date().required(),
         tempatLahir: Joi.string().required(),
         noBPJS_KIS: Joi.string().required(),
+        kecamatan: Joi.string().optional(),
         kelurahan_desa: Joi.string().required(),
         kabupaten: Joi.string().required(),
         riwayatAlergi: Joi.string().required(),
@@ -111,13 +146,16 @@ export const createPasien = async (req: Request, res: Response) => {
         const body = req.body;
         const schema = createPasienSchema(req.body);
 
+        console.log(req.body);  
+
+
         if ('error' in schema) {
             return res.status(422).send(validationResponse(schema));
         }
 
         const user = await userRepository.findOneBy({ id: req.jwtPayload.id });
       // Validasi role pengguna yang sedang login  
-      if (!user || user.role !== 'ADMIN','PETUGAS' ) {  
+      if (!user || user.role == 'DOKTER' ) {  
         return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
     }  
 
@@ -135,11 +173,12 @@ export const createPasien = async (req: Request, res: Response) => {
 
         // Membuat entitas pasien baru
         const newPasien = new Pasien();
-        newPasien.nomerRM = nextNomerRM;
+        newPasien.nomerRM = nextNomerRM
+        newPasien.namaPasien = body.namaPasien
         newPasien.namaLengkap = body.namaLengkap
-        newPasien.jenisKelamin = body.jenisKelamin;
-        newPasien.tanggalLahir = body.tanggalLahir;
-        newPasien.tempatLahir = body.tempatLahir;
+        newPasien.jenisKelamin = body.jenisKelamin
+        newPasien.tanggalLahir = body.tanggalLahir
+        newPasien.tempatLahir = body.tempatLahir
         newPasien.noBPJS_KIS = body.noBPJS_KIS
         newPasien.kelurahan_desa = body.kelurahan_desa
         newPasien.kecamatan = body.kecamatan
@@ -166,10 +205,11 @@ export const updatePasien = async (req : Request, res: Response) =>{
         namaPasien: Joi.string().optional(),
         namaLengkap: Joi.string().optional(),
         jenisKelamin: Joi.string().optional(),
-        tanggalLahir: Joi.string().optional(),
+        tanggalLahir: Joi.date().optional(),
         tempatLahir: Joi.string().optional(),
         noBPJS_KIS: Joi.string().optional(),
         kelurahan_desa: Joi.string().optional(),
+        kecamatan: Joi.string().optional(),
         kabupaten: Joi.string().optional(),
         riwayatAlergi: Joi.string().optional(),
         riwayatPenyakit: Joi.string().optional(),        
@@ -196,6 +236,7 @@ export const updatePasien = async (req : Request, res: Response) =>{
         }  
 
         const updatePasien = await pasienRepository.findOneBy({ id });
+        updatePasien.namaPasien = body.namaPasien
         updatePasien.namaLengkap = body.namaLengkap
         updatePasien.jenisKelamin = body.jenisKelamin;
         updatePasien.tanggalLahir = body.tanggalLahir;
