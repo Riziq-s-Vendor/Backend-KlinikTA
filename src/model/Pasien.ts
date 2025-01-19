@@ -23,7 +23,7 @@ export class Pasien{
         nullable: true
     })
     @IsString()
-    public namaPasien: string
+    public namaLengkap: string
 
     @Column({
         default: null,
@@ -47,19 +47,6 @@ export class Pasien{
     @IsString()
     public tempatLahir: String
 
-    @Column({
-        default: null,
-        nullable: true
-    })
-    @IsString()
-    public agama: string
-
-    @Column({
-        default: null,
-        nullable: true
-    })
-    @IsString()
-    public noTelp: string
 
     
     @Column({
@@ -67,7 +54,7 @@ export class Pasien{
         nullable: true
     })
     @IsString()
-    public BPJS: string
+    public noBPJS_KIS: string
 
     
     @Column({
@@ -75,7 +62,35 @@ export class Pasien{
         nullable: true
     })
     @IsString()
-    public alamat: string
+    public kelurahan_desa: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public kecamatan: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public kabupaten: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public riwayatAlergi: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public riwayatPenyakit: string
 
 
 

@@ -94,28 +94,17 @@ export const getPasienById =  async (req : Request, res : Response) =>{
 export const createPasien = async (req: Request, res: Response) => {
     const createPasienSchema = (input) => Joi.object({
         namaPasien: Joi.string().required(),
+        namaLengkap: Joi.string().required(),
         jenisKelamin: Joi.string().required(),
-        tanggalLahir: Joi.date().required(),
+        tanggalLahir: Joi.string().required(),
         tempatLahir: Joi.string().required(),
-        agama: Joi.string().required(),
-        noTelp: Joi.string().required(),
-        BPJS: Joi.string().required(),
-        alamat: Joi.string().required(),
-        noUrut: Joi.number().required(),
-        poliklinik: Joi.string().required(),
-        namaDoktor: Joi.string().required(),
-        petugasAnalisis: Joi.string().required(),
-        tanggalEntry: Joi.string().required(),
-        jumlahLengkap: Joi.string().required(),
-        jumlahTidakLengkap: Joi.string().required(),
-        presentase: Joi.string().required(),
-        keterangan: Joi.string().required(),
-        tanggalBerobat: Joi.date().required(),
-        riwayatKeshatan: Joi.string().required(),
-        pemeriksaanFisik: Joi.string().required(),
-        pengkajianDokter: Joi.string().required(),
-        diagnosa: Joi.string().required(),
-        TTDDokter: Joi.string().required(),
+        noBPJS_KIS: Joi.string().required(),
+        kelurahan_desa: Joi.string().required(),
+        kabupaten: Joi.string().required(),
+        riwayatAlergi: Joi.string().required(),
+        riwayatPenyakit: Joi.string().required(),
+
+        
     }).validate(input);
 
     try {
@@ -127,10 +116,10 @@ export const createPasien = async (req: Request, res: Response) => {
         }
 
         const user = await userRepository.findOneBy({ id: req.jwtPayload.id });
-
-        if (!user) {
-            return res.status(403).send(successResponse('Add Pasien is Not Authorized', { data: user }));
-        }
+      // Validasi role pengguna yang sedang login  
+      if (!user || user.role !== 'ADMIN','PETUGAS' ) {  
+        return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
+    }  
 
         // Query untuk mendapatkan `nomerRM` terakhir
         const lastPasien = await pasienRepository
@@ -147,39 +136,22 @@ export const createPasien = async (req: Request, res: Response) => {
         // Membuat entitas pasien baru
         const newPasien = new Pasien();
         newPasien.nomerRM = nextNomerRM;
-        newPasien.namaPasien = body.namaPasien;
+        newPasien.namaLengkap = body.namaLengkap
         newPasien.jenisKelamin = body.jenisKelamin;
         newPasien.tanggalLahir = body.tanggalLahir;
         newPasien.tempatLahir = body.tempatLahir;
-        newPasien.agama = body.agama;
-        newPasien.noTelp = body.noTelp;
-        newPasien.BPJS = body.BPJS;
-        newPasien.alamat = body.alamat;
+        newPasien.noBPJS_KIS = body.noBPJS_KIS
+        newPasien.kelurahan_desa = body.kelurahan_desa
+        newPasien.kecamatan = body.kecamatan
+        newPasien.kabupaten = body.kabupaten
+        newPasien.riwayatAlergi = body.riwayatAlergi
+        newPasien.riwayatPenyakit = body.riwayatPenyakit
         await pasienRepository.save(newPasien);
 
-        // Membuat entitas riwayat pasien baru
-        const newRiwayatPasien = new RiwayatPasien();
-        newRiwayatPasien.Pasiens = newPasien;
-        newRiwayatPasien.noUrut = body.noUrut;
-        newRiwayatPasien.poliklinik = body.poliklinik;
-        newRiwayatPasien.namaDoktor = body.namaDoktor;
-        newRiwayatPasien.petugasAnalisis = body.petugasAnalisis;
-        newRiwayatPasien.tanggalEntry = body.tanggalEntry;
-        newRiwayatPasien.jumlahLengkap = body.jumlahLengkap;
-        newRiwayatPasien.jumlahTidakLengkap = body.jumlahTidakLengkap;
-        newRiwayatPasien.presentase = body.presentase;
-        newRiwayatPasien.keterangan = body.keterangan;
-        newRiwayatPasien.tanggalBerobat = body.tanggalBerobat;
-        newRiwayatPasien.riwayatKeshatan = body.riwayatKeshatan;
-        newRiwayatPasien.pemeriksaanFisik = body.pemeriksaanFisik;
-        newRiwayatPasien.pengkajianDokter = body.pengkajianDokter;
-        newRiwayatPasien.diagnosa = body.diagnosa;
-        newRiwayatPasien.TTDDokter = body.TTDDokter;
-        await riwayatPasienRepository.save(newRiwayatPasien);
+      
 
         return res.status(200).send(successResponse("Create Pasien Success", {
             data: newPasien,
-            riwayatPasien: newRiwayatPasien
         }, 200));
 
     } catch (error) {
@@ -191,30 +163,16 @@ export const createPasien = async (req: Request, res: Response) => {
 
 export const updatePasien = async (req : Request, res: Response) =>{
     const updatePasienSchema = (input) => Joi.object({
-        nomerRM : Joi.number().optional(),
-        namaPasien : Joi.string().optional(),
-        jenisKelamin : Joi.string().optional(),
-        tanggalLahir : Joi.date().optional(),
-        tempatLahir : Joi.string().optional(),
-        agama : Joi.string().optional(),
-        noTelp : Joi.string().optional(),
-        BPJS : Joi.string().optional(),
-        alamat : Joi.string().optional(),
-        noUrut : Joi.number().optional(),
-        poliklinik : Joi.string().optional(),
-        namaDoktor : Joi.string().optional(),
-        petugasAnalisis : Joi.string().optional(),
-        tanggalEntry : Joi.string().optional(),
-        jumlahLengkap : Joi.string().optional(),
-        jumlahTidakLengkap : Joi.string().optional(),
-        presentase : Joi.string().optional(),
-        keterangan : Joi.string().optional(),
-        tanggalBerobat : Joi.date().optional(),
-        riwayatKeshatan : Joi.string().optional(),
-        pemeriksaanFisik : Joi.string().optional(),
-        pengkajianDokter : Joi.string().optional(),
-        diagnosa : Joi.string().optional(),
-        TTDDokter : Joi.string().optional(),  
+        namaPasien: Joi.string().optional(),
+        namaLengkap: Joi.string().optional(),
+        jenisKelamin: Joi.string().optional(),
+        tanggalLahir: Joi.string().optional(),
+        tempatLahir: Joi.string().optional(),
+        noBPJS_KIS: Joi.string().optional(),
+        kelurahan_desa: Joi.string().optional(),
+        kabupaten: Joi.string().optional(),
+        riwayatAlergi: Joi.string().optional(),
+        riwayatPenyakit: Joi.string().optional(),        
     }).validate(input);
 
     try {
@@ -233,40 +191,27 @@ export const updatePasien = async (req : Request, res: Response) =>{
             return res.status(200).send(successResponse('Add Event is Not Authorized', { data: userAcces }))
         }
 
+        if (!userAcces || userAcces.role !== 'ADMIN' ) {  
+            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can update pasien', 403));  
+        }  
+
         const updatePasien = await pasienRepository.findOneBy({ id });
-        updatePasien.namaPasien = body.namaPasien
-        updatePasien.jenisKelamin = body.jenisKelamin
-        updatePasien.nomerRM = body.nomerRM
-        updatePasien.tanggalLahir = body.tanggalLahir
-        updatePasien.tempatLahir = body.tempatLahir
-        updatePasien.agama = body.agama
-        updatePasien.noTelp = body.noTelp
-        updatePasien.BPJS = body.BPJS
-        updatePasien.alamat = body.alamat
+        updatePasien.namaLengkap = body.namaLengkap
+        updatePasien.jenisKelamin = body.jenisKelamin;
+        updatePasien.tanggalLahir = body.tanggalLahir;
+        updatePasien.tempatLahir = body.tempatLahir;
+        updatePasien.noBPJS_KIS = body.noBPJS_KIS
+        updatePasien.kelurahan_desa = body.kelurahan_desa
+        updatePasien.kecamatan = body.kecamatan
+        updatePasien.kabupaten = body.kabupaten
+        updatePasien.riwayatAlergi = body.riwayatAlergi
+        updatePasien.riwayatPenyakit = body.riwayatPenyakit
         await pasienRepository.save(updatePasien)
 
-        const updateRiwayatPasien = await riwayatPasienRepository.findOne({
-            where : {Pasiens : Equal(id)},
-         })
-        updateRiwayatPasien.noUrut = body.noUrut
-        updateRiwayatPasien.poliklinik = body.poliklinik
-        updateRiwayatPasien.namaDoktor = body.namaDoktor
-        updateRiwayatPasien.petugasAnalisis = body.petugasAnalisis
-        updateRiwayatPasien.tanggalEntry = body.tanggalEntry
-        updateRiwayatPasien.jumlahLengkap = body.jumlahLengkap
-        updateRiwayatPasien.jumlahTidakLengkap = body.jumlahTidakLengkap
-        updateRiwayatPasien.presentase = body.presentase
-        updateRiwayatPasien.keterangan = body.keterangan
-        updateRiwayatPasien.tanggalBerobat = body.tanggalBerobat
-        updateRiwayatPasien.riwayatKeshatan = body.riwayatKeshatan
-        updateRiwayatPasien.pemeriksaanFisik = body.pemeriksaanFisik
-        updateRiwayatPasien.pengkajianDokter = body.pengkajianDokter
-        updateRiwayatPasien.diagnosa = body.diagnosa
-        updateRiwayatPasien.TTDDokter = body.TTDDokter
-         await riwayatPasienRepository.save(updateRiwayatPasien)
+     
 
         console.log(updatePasien)
-        return res.status(200).send(successResponse("Update Pasien and Riwayat Success", { data: updatePasien,updateRiwayatPasien }, 200))
+        return res.status(200).send(successResponse("Update Pasien and Riwayat Success", { data: updatePasien }, 200))
 
     }catch(error){
         res.status(500).json({ msg: error.message })
@@ -282,9 +227,9 @@ export const deletePasien = async (req: Request, res: Response) => {
 
         // Cek apakah pengguna memiliki akses
         const userAccess = await userRepository.findOneBy({ id: req.jwtPayload.id });
-        if (!userAccess) {
-            return res.status(403).send(successResponse('Delete Pasien is Not Authorized', { data: userAccess }));
-        }
+        if (!userAccess || userAccess.role !== 'ADMIN' ) {  
+            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can deleted users', 403));  
+        } 
 
         // Cari pasien berdasarkan ID
         const pasien = await pasienRepository.findOne({
