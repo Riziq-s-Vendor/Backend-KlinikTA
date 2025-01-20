@@ -1,6 +1,7 @@
 import { IsDate, IsNumber, IsString,IsUppercase } from "class-validator";
 import { Entity,OneToMany,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,DeleteDateColumn, JoinColumn, ManyToOne } from "typeorm";
 import { Pasien } from "./Pasien";
+import { User } from "./User";
 
 
 @Entity()
@@ -14,28 +15,28 @@ export class RiwayatPasien{
         nullable : true
     })
     @IsNumber()
-    public noUrut : number
+    public Dokter : number
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public poliklinik: string
+    public pasien: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public namaDoktor: string
+    public noRM: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public petugasAnalisis: string
+    public lamaPenyakit: string
 
     
     @Column({
@@ -43,28 +44,28 @@ export class RiwayatPasien{
         nullable: true
     })
     @IsDate()
-    public tanggalEntry: Date
+    public lain_lain: Date
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public jumlahLengkap: string
+    public waktuPermeriksaan: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public jumlahTidakLengkap: string
+    public fisik: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public presentase: string
+    public lain_lainHasilPemeriksaan: string
 
     
     @Column({
@@ -72,7 +73,7 @@ export class RiwayatPasien{
         nullable: true
     })
     @IsString()
-    public keterangan: string
+    public laboratorium: string
 
     
 
@@ -80,43 +81,98 @@ export class RiwayatPasien{
         default: null,
         nullable: true
     })
-    @IsDate()
-    public tanggalBerobat: Date
+    @IsString()
+    public radiologi: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public riwayatKeshatan: string
+    public keadaanKeluarRS: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public pemeriksaanFisik: string
+    public prognosa: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public pengkajianDokter: string
+    public kapanPenyakitDahulu: string
 
         @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public diagnosa: string
+    public pengobatan: string
 
     @Column({
         default: null,
         nullable: true
     })
     @IsString()
-    public TTDDokter: string
+    public faktorEtimologi: string
+
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public diagnosaAkhir: string
+
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public masalahDihadapi: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public konsultasi: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public pengobatanTindakan: string
+
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public perjalananPeyakit: string
+
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public sebabMeninggal: string
+
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
+    public usulTidakLanjut: string
+
 
 
     @CreateDateColumn()
@@ -131,6 +187,10 @@ export class RiwayatPasien{
     @ManyToOne (() => Pasien, (Pasiens) => Pasiens.RiwayatPasiens)
     @JoinColumn()
     public Pasiens : Pasien
+
+    @ManyToOne (() => User, (Dokters) => Dokters.RiwayatPasiens)
+    @JoinColumn()
+    public Dokters : User
 
 
     

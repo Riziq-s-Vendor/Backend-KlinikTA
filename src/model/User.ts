@@ -1,6 +1,7 @@
 import { IsString,IsUppercase } from "class-validator";
-import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,DeleteDateColumn } from "typeorm";
+import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,DeleteDateColumn, OneToMany } from "typeorm";
 import bcrypt from 'bcryptjs';
+import { RiwayatPasien } from "./RiwayatPasien";
 
 export enum UserRole {
     ADMIN = 'ADMIN',
@@ -70,6 +71,9 @@ export class User{
 
     @DeleteDateColumn()
     public deletedAt: Date
+
+    @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Dokters)
+    public RiwayatPasiens : RiwayatPasien
 
     public hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8)
