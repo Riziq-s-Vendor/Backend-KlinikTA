@@ -10,26 +10,16 @@ export class RiwayatPasien{
     @PrimaryGeneratedColumn('uuid')
     public id : string
 
-    @Column({
-        default : null,
-        nullable : true
-    })
-    @IsNumber()
-    public Dokter : number
+
 
     @Column({
         default: null,
-        nullable: true
+        nullable: true,
+        type :"varchar",
+        length : 10
     })
     @IsString()
-    public pasien: string
-
-    @Column({
-        default: null,
-        nullable: true
-    })
-    @IsString()
-    public noRM: string
+    public nomerRM: string
 
     @Column({
         default: null,
@@ -43,8 +33,8 @@ export class RiwayatPasien{
         default: null,
         nullable: true
     })
-    @IsDate()
-    public lain_lain: Date
+    @IsString()
+    public lain_lain: string
 
     @Column({
         default: null,
