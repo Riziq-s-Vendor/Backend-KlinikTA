@@ -233,7 +233,7 @@ export const deleteUser = async (req: Request, res: Response) => {
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
         if (!userAcces) {
-            return res.status(200).send(successResponse('Add Event is Not Authorized', { data: userAcces }))
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }))
         }
 
         const user = await userRepository.findOneBy({ id: String(req.params.id) })
