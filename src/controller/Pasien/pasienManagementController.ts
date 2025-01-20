@@ -159,21 +159,10 @@ export const createPasien = async (req: Request, res: Response) => {
         return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
     }  
 
-        // Query untuk mendapatkan `nomerRM` terakhir
-        const lastPasien = await pasienRepository
-        .createQueryBuilder("pasien")
-        .orderBy("pasien.nomerRM", "DESC")
-        .getOne();
-        // Hitung `nomerRM` baru
-        let nextNomerRM = "000001"; // Default jika belum ada data pasien
-        if (lastPasien) {
-            const currentNumber = parseInt(lastPasien.nomerRM, 10);
-            nextNomerRM = String(currentNumber + 1).padStart(6, "0");
-        }
+
 
         // Membuat entitas pasien baru
         const newPasien = new Pasien();
-        newPasien.nomerRM = nextNomerRM
         newPasien.namaPasien = body.namaPasien
         newPasien.namaLengkap = body.namaLengkap
         newPasien.jenisKelamin = body.jenisKelamin
