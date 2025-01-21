@@ -3,6 +3,13 @@ import { Entity,OneToMany,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateD
 import { Pasien } from "./Pasien";
 import { User } from "./User";
 
+export enum Status {
+    TERSEDIA = 'TERSEDIA',
+    DIKEMBALIKAN = 'DIKEMBALIKAN',
+    TerlambatDikembalikan = ' TerlambatDikembalikan',
+
+}
+
 
 @Entity()
 export class RiwayatPasien{
@@ -162,6 +169,13 @@ export class RiwayatPasien{
     })
     @IsString()
     public usulTidakLanjut: string
+
+    @Column({
+    type: 'enum',
+    enum: Status,
+    })
+    @IsString()
+    public statusPeminjaman: Status
 
 
 
