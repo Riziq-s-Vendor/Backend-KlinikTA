@@ -190,21 +190,10 @@ export const createRekamMedis = async (req: Request, res: Response) => {
             return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
         }  
 
-        // Query untuk mendapatkan `nomerRM` terakhir
-        const lastPasien = await riwayatPasienRepository
-        .createQueryBuilder("pasien")
-        .orderBy("pasien.nomerRM", "DESC")
-        .getOne();
-        // Hitung `nomerRM` baru
-        let nextNomerRM = "000001"; // Default jika belum ada data pasien
-        if (lastPasien) {
-            const currentNumber = parseInt(lastPasien.nomerRM, 10);
-            nextNomerRM = String(currentNumber + 1).padStart(6, "0");
-        }
+   
 
         // Membuat entitas pasien baru
         const newRekamMedis = new RiwayatPasien();
-        newRekamMedis.nomerRM = nextNomerRM
         newRekamMedis.Dokters = dokter; // Menggunakan objek dokter  
         newRekamMedis.Pasiens = pasien;
         newRekamMedis.statusPeminjaman = Status.TERSEDIA
@@ -300,20 +289,9 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
                     return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
                 }  
     
-            // Query untuk mendapatkan `nomerRM` terakhir
-            const lastPasien = await riwayatPasienRepository
-            .createQueryBuilder("pasien")
-            .orderBy("pasien.nomerRM", "DESC")
-            .getOne();
-            // Hitung `nomerRM` baru
-            let nextNomerRM = "000001"; // Default jika belum ada data pasien
-            if (lastPasien) {
-                const currentNumber = parseInt(lastPasien.nomerRM, 10);
-                nextNomerRM = String(currentNumber + 1).padStart(6, "0");
-            }
+
 
         const updateRekamMedis = await riwayatPasienRepository.findOneBy({ id });
-        updateRekamMedis.nomerRM = nextNomerRM
         updateRekamMedis.Dokters = dokter; // Menggunakan objek dokter  
         updateRekamMedis.Pasiens = pasien
         updateRekamMedis.lamaPenyakit = body.lamaPenyakit

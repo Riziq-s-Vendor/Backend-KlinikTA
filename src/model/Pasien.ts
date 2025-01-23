@@ -9,6 +9,15 @@ export class Pasien{
     @PrimaryGeneratedColumn('uuid')
     public id : string
 
+    @Column({
+        default: null,
+        nullable: true,
+        type :"varchar",
+        length : 10
+    })
+    @IsString()
+    public nomerRM: string
+
 
     @Column({
         default: null,
