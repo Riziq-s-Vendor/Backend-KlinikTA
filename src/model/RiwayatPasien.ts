@@ -2,13 +2,9 @@ import { IsDate, IsNumber, IsString,IsUppercase } from "class-validator";
 import { Entity,OneToMany,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,DeleteDateColumn, JoinColumn, ManyToOne } from "typeorm";
 import { Pasien } from "./Pasien";
 import { User } from "./User";
+import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
 
-export enum Status {
-    TERSEDIA = 'TERSEDIA',
-    DIKEMBALIKAN = 'DIKEMBALIKAN',
-    TerlambatDikembalikan = ' TerlambatDikembalikan',
 
-}
 
 
 @Entity()
@@ -160,12 +156,7 @@ export class RiwayatPasien{
     @IsString()
     public usulTidakLanjut: string
 
-    @Column({
-    type: 'enum',
-    enum: Status,
-    })
-    @IsString()
-    public statusPeminjaman: Status
+  
 
 
 
@@ -186,6 +177,7 @@ export class RiwayatPasien{
     @JoinColumn()
     public Dokters : User
 
+  
 
     
     

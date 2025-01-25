@@ -2,6 +2,7 @@ import { IsString,IsUppercase } from "class-validator";
 import { Entity,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateDateColumn,DeleteDateColumn, OneToMany } from "typeorm";
 import bcrypt from 'bcryptjs';
 import { RiwayatPasien } from "./RiwayatPasien";
+import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
 
 export enum UserRole {
     ADMIN = 'ADMIN',
@@ -74,6 +75,9 @@ export class User{
 
     @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Dokters)
     public RiwayatPasiens : RiwayatPasien
+
+    @OneToMany (() => peminjamanRekamMedis, (peminjamanRekamMedis) => peminjamanRekamMedis.Dokters)
+    public peminjamanRekamMedis : peminjamanRekamMedis
 
     public hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8)

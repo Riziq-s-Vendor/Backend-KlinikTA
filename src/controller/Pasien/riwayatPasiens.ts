@@ -3,7 +3,7 @@ import { AppDataSource } from "../../data-source";
 import Joi, { equal, required, string } from "joi";
 import { User,UserRole } from "../../model/User";
 import { Pasien } from "../../model/Pasien";
-import { RiwayatPasien,Status } from "../../model/RiwayatPasien";
+import { RiwayatPasien } from "../../model/RiwayatPasien";
 import exp from "constants";
 import { Equal } from 'typeorm'; // Pastikan Equal diimpor dari typeorm
 
@@ -196,7 +196,6 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         const newRekamMedis = new RiwayatPasien();
         newRekamMedis.Dokters = dokter; // Menggunakan objek dokter  
         newRekamMedis.Pasiens = pasien;
-        newRekamMedis.statusPeminjaman = Status.TERSEDIA
         newRekamMedis.lamaPenyakit = body.lamaPenyakit
         newRekamMedis.lain_lain = body.lain_lain
         newRekamMedis.waktuPermeriksaan = body.waktuPermeriksaan
