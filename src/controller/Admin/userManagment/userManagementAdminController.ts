@@ -39,8 +39,6 @@ export const createUser = async (req : Request, res: Response) =>{
         .required(),
         role : Joi.string().required(),
         noTelp : Joi.string().required(),
-        eTTD : Joi.string().optional(),
-
 
     }).validate(input);
 
@@ -65,7 +63,6 @@ export const createUser = async (req : Request, res: Response) =>{
         NewUser.password = encrypt(body.password); // Menggunakan fungsi encrypt  
         NewUser.role = body.role
         NewUser.noTelp = body.noTelp
-        NewUser.eTTD = body.eTTD
 
         if (req.file) {  
             NewUser.eTTD = req.file.path; // Menyimpan path file  
@@ -94,8 +91,6 @@ export const updateUser = async (req : Request, res: Response) =>{
         .optional(),
         role : Joi.string().optional(),
         noTelp: Joi.string().optional(),  
-        eTTD : Joi.string().optional(),
-
 
     }).validate(input);
 
@@ -120,7 +115,6 @@ export const updateUser = async (req : Request, res: Response) =>{
         updateUser.password = encrypt(body.password);
         updateUser.role = body.role
         updateUser.noTelp = body.noTelp
-        updateUser.eTTD = body.eTTD
 
         if (req.file) {  
             updateUser.eTTD = req.file.path; // Update eTTD if a new file is uploaded  
