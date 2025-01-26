@@ -38,6 +38,20 @@ export class Pasien{
         nullable: true
     })
     @IsString()
+    public NIK: string
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsNumber()
+    public usia: number
+
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsString()
     public namaLengkap: string
 
     @Column({

@@ -54,13 +54,14 @@ export const getPasien = async (req: Request, res: Response) => {
             const formattedDate = new Date(tanggalLahir).toLocaleDateString('id-ID', options); // Format sesuai dengan locale Indonesia  
   
             // Mengubah format tanggal menjadi "18 November 2000"  
-            const [day, month, year] = formattedDate.split(' ');  
-            const formattedTTL = `${day} ${month.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
+            const [day, MONTTH, year] = formattedDate.split(' ');  
+            const formattedTTL = `${day} ${MONTTH.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
   
             return {      
                 ...rest,    
                 TTL: `${tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
-                alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`,      
+                alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`, 
+                tangalLahir :`${tanggalLahir}`     
             };      
         });    
     
@@ -105,13 +106,15 @@ export const getPasienById = async (req: Request, res: Response) => {
         const formattedDate = new Date(tanggalLahir).toLocaleDateString('id-ID', options); // Format sesuai dengan locale Indonesia  
   
         // Mengubah format tanggal menjadi "18 November 2000"  
-        const [day, month, year] = formattedDate.split(' ');  
-        const formattedTTL = `${day} ${month.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
+        const [day, MONTH, year] = formattedDate.split(' ');  
+        const formattedTTL = `${day} ${MONTH.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
   
         const modifiedPasien = {    
             ...rest,  
             TTL: `${tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`,    
+            tangalLahir :`${tanggalLahir}`     
+
         };    
     
         return res.status(200).send(successResponse("Get Pasien by ID Success", { data: modifiedPasien }, 200));    
@@ -138,6 +141,9 @@ export const createPasien = async (req: Request, res: Response) => {
         kabupaten: Joi.string().required(),
         riwayatAlergi: Joi.string().required(),
         riwayatPenyakit: Joi.string().required(),
+        NIK: Joi.string().required(),
+        usia: Joi.number().required(),
+
 
         
     }).validate(input);
@@ -188,6 +194,8 @@ export const createPasien = async (req: Request, res: Response) => {
         newPasien.kabupaten = body.kabupaten
         newPasien.riwayatAlergi = body.riwayatAlergi
         newPasien.riwayatPenyakit = body.riwayatPenyakit
+        newPasien.usia = body.usia
+        newPasien.NIK = body.NIK
         await pasienRepository.save(newPasien);
 
       
@@ -215,7 +223,9 @@ export const updatePasien = async (req : Request, res: Response) =>{
         kecamatan: Joi.string().optional(),
         kabupaten: Joi.string().optional(),
         riwayatAlergi: Joi.string().optional(),
-        riwayatPenyakit: Joi.string().optional(),        
+        riwayatPenyakit: Joi.string().optional(),  
+        NIK: Joi.string().optional(),
+        usia: Joi.number().optional(),      
     }).validate(input);
 
     try {
@@ -250,6 +260,8 @@ export const updatePasien = async (req : Request, res: Response) =>{
         updatePasien.kabupaten = body.kabupaten
         updatePasien.riwayatAlergi = body.riwayatAlergi
         updatePasien.riwayatPenyakit = body.riwayatPenyakit
+        updatePasien.usia = body.usia
+        updatePasien.NIK = body.NIK
         await pasienRepository.save(updatePasien)
 
      
