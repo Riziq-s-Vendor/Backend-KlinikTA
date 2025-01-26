@@ -129,7 +129,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
        // Validasi role pengguna yang sedang login  
     if (!user || user.role !== 'PETUGAS') {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create users', 403));  
+        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create Peminjaman Rekam Medis', 403));  
     }  
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
