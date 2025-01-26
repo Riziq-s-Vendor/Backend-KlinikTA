@@ -213,7 +213,7 @@ export const getUserById =  async (req : Request, res : Response) =>{
         } 
 
 
-        user.eTTD = user.eTTD ? `public/image/eTTDDokter/${user.eTTD.replace(/\\/g, '/')}` : null; // Ganti dengan domain Anda  
+        user.eTTD = user.eTTD ? `${user.eTTD.replace(/\\/g, '/')}` : null; // Ganti dengan domain Anda  
 
 
 
