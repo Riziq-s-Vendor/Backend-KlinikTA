@@ -130,14 +130,7 @@ export class Pasien{
 
 
 
-    @CreateDateColumn()
-    public createdAt: Date
-
-    @UpdateDateColumn()
-    public updatedAt: Date
-
-    @DeleteDateColumn()
-    public deletedAt: Date
+   
 
     @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Pasiens)
     public RiwayatPasiens : RiwayatPasien
