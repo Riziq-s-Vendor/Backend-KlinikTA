@@ -188,7 +188,7 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
         updateStatusRM.statusPeminjaman = body.status
         await pasienRepository.save(updateStatusRM)
         console.log(updateStatusRM)
-        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: updateStatusRM }, 200))
+        return res.status(200).send(successResponse("Update Status Peminjaman Rekam Medis Success", { data: updateStatusRM }, 200))
 
     }catch(error){
         res.status(500).json({ msg: error.message })
