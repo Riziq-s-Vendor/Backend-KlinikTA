@@ -184,18 +184,9 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
         return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create users', 403));  
     }  
 
-    const pasien = await pasienRepository.findOneBy({ id: body.Pasien });  
-    if (!pasien) {  
-        return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
-    } 
-
-    const checkStatusRM = await pasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
-    if (!checkStatusRM) {
-        return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
-    }
         const updateStatusRM = await pasienRepository.findOneBy({id})
         updateStatusRM.statusPeminjaman = body.status
-        await peminjamanRekamMedisRepository.save(updateStatusRM)
+        await pasienRepository.save(updateStatusRM)
         console.log(updateStatusRM)
         return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: updateStatusRM }, 200))
 
