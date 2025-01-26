@@ -24,10 +24,19 @@ export class peminjamanRekamMedis{
     @IsDate()
     public tanggalDikembalikan: Date
 
+    @CreateDateColumn()
+    public createdAt: Date
+
+    @UpdateDateColumn()
+    public updatedAt: Date
+
+    @DeleteDateColumn()
+    public deletedAt: Date
+
     
-    @ManyToOne (() => Pasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
+    @ManyToOne (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
     @JoinColumn()
-    public RiwayatPasiens : Pasien
+    public RiwayatPasiens : RiwayatPasien
 
     @ManyToOne (() => User, (Dokters) => Dokters.peminjamanRekamMedis)
     @JoinColumn()

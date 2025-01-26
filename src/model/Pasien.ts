@@ -3,12 +3,6 @@ import { Entity,OneToMany,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateD
 import { RiwayatPasien } from "./RiwayatPasien";
 import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
 
-export enum StatusRM {
-    TERSEDIA = 'TERSEDIA',
-    DIPINJAM = 'DIPINJAM',
-    TerlambatDikembalikan = ' TerlambatDikembalikan',
-
-}
 
 @Entity()
 export class Pasien{
@@ -121,22 +115,11 @@ export class Pasien{
     @IsString()
     public riwayatPenyakit: string
 
-    @Column({
-        type: 'enum',
-        enum: StatusRM,
-        })
-        @IsString()
-        public statusPeminjaman: StatusRM
-
-
 
    
 
-    @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Pasiens)
+    @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
     public RiwayatPasiens : RiwayatPasien
-
-    @OneToMany (() => peminjamanRekamMedis, (peminjamanRekamMedis) => peminjamanRekamMedis.RiwayatPasiens)
-    public peminjamanRekamMedis : peminjamanRekamMedis
 
  
 }

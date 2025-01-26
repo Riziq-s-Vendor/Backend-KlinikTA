@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import Joi, { equal, required, string } from "joi";
 import { User } from "../../model/User";
-import { Pasien,StatusRM } from "../../model/Pasien";
+import { Pasien } from "../../model/Pasien";
 import { RiwayatPasien } from "../../model/RiwayatPasien";
 import exp from "constants";
 import { Equal } from 'typeorm'; // Pastikan Equal diimpor dari typeorm
@@ -164,7 +164,6 @@ export const createPasien = async (req: Request, res: Response) => {
         // Membuat entitas pasien baru
         const newPasien = new Pasien();
         newPasien.nomerRM = nextNomerRM
-        newPasien.statusPeminjaman = StatusRM.TERSEDIA
         newPasien.namaPasien = body.namaPasien
         newPasien.namaLengkap = body.namaLengkap
         newPasien.jenisKelamin = body.jenisKelamin

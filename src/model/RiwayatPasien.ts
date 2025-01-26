@@ -4,6 +4,12 @@ import { Pasien } from "./Pasien";
 import { User } from "./User";
 import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
 
+export enum StatusRM {
+    TERSEDIA = 'TERSEDIA',
+    DIPINJAM = 'DIPINJAM',
+    TerlambatDikembalikan = ' TerlambatDikembalikan',
+
+}
 
 
 
@@ -156,6 +162,16 @@ export class RiwayatPasien{
     @IsString()
     public usulTidakLanjut: string
 
+    
+    @Column({
+        type: 'enum',
+        enum: StatusRM,
+        })
+        @IsString()
+        public statusPeminjaman: StatusRM
+
+
+
   
 
 
@@ -176,6 +192,9 @@ export class RiwayatPasien{
     @ManyToOne (() => User, (Dokters) => Dokters.RiwayatPasiens)
     @JoinColumn()
     public Dokters : User
+
+    @OneToMany (() => peminjamanRekamMedis, (peminjamanRekamMedis) => peminjamanRekamMedis.RiwayatPasiens)
+    public peminjamanRekamMedis : peminjamanRekamMedis
 
   
 

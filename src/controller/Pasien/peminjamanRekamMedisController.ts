@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../data-source";
 import Joi, { equal, required, string } from "joi";
 import { User,UserRole } from "../../model/User";
-import { RiwayatPasien } from "../../model/RiwayatPasien";
+import { RiwayatPasien,StatusRM } from "../../model/RiwayatPasien";
 import { peminjamanRekamMedis } from "../../model/peminjamanRekamMedis";
-import { Pasien, StatusRM } from "../../model/Pasien";
+import { Pasien } from "../../model/Pasien";
 const { successResponse, errorResponse, validationResponse } = require('../../utils/response')
 
 
@@ -17,92 +17,91 @@ const pasienRepository = AppDataSource.getRepository(Pasien);
 
 
 
-export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {  
-    try {  
-        const { limit: queryLimit, page: page, filter, search } = req.query;  
-  
-        const queryBuilder = peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")  
-            .leftJoinAndSelect("peminjaman.Dokters", "dokter")  
-            .leftJoinAndSelect("peminjaman.RiwayatPasiens", "pasien")  
-            .orderBy("peminjaman.createdAt", "DESC");  
-  
-        // Filter berdasarkan status peminjaman  
-        if (filter) {  
-            queryBuilder.where("peminjaman.statusPeminjaman = :filter", { filter });  
-        }  
-  
-        // Search berdasarkan nama pasien atau no RM pasien  
-        if (search) {  
-            queryBuilder.andWhere("pasien.namaPasien LIKE :search OR pasien.nomerRM LIKE :search", {  
-                search: `%${search}%`  
-            });  
-        }  
-  
-        const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;  
-        const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1  
-        const skip = (currentPage - 1) * (dynamicLimit || 0);  
-  
-        const [data, totalCount] = await queryBuilder  
-            .skip(skip)  
-            .take(dynamicLimit || undefined)  
-            .getManyAndCount();  
-  
-        const modifiedData = data.map((peminjaman) => {  
-            return {  
-                no: peminjaman.id, // Assuming id is the unique identifier  
-                namaPasien: peminjaman.RiwayatPasiens.namaPasien,  
-                noRMPasien: peminjaman.RiwayatPasiens.nomerRM,  
-                tanggalBerobat: peminjaman.tanggalDikembalikan, // Sesuaikan jika ada field lain  
-                diagnosaAkhir: peminjaman.RiwayatPasiens.RiwayatPasiens.diagnosaAkhir || "N/A", // Sesuaikan jika ada field lain  
-                pengobatan: peminjaman.alasanPeminjaman, // Sesuaikan jika ada field lain  
-                keadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.RiwayatPasiens.keadaanKeluarRS || "N/A", // Sesuaikan jika ada field lain  
-                statusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman,  
-            };  
-        });  
-  
-        return res.status(200).send(successResponse('Get Peminjaman Rekam Medis Success', {  
-            data: modifiedData,  
-            totalCount,  
-            currentPage,  
-            totalPages: Math.ceil(totalCount / (dynamicLimit || 1)),  
-        }, 200));  
-  
-    } catch (error) {  
-        return res.status(500).json({ msg: error.message });  
-    }  
-}  
+export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {    
+    try {    
+        const { limit: queryLimit, page, filter, search } = req.query;    
+    
+        const queryBuilder = peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")    
+            .leftJoinAndSelect("peminjaman.Dokters", "dokter")    
+            .leftJoinAndSelect("peminjaman.RiwayatPasiens", "riwayatPasien")
+            .leftJoinAndSelect("riwayatPasien.Pasiens", "Pasien")
+            .orderBy("peminjaman.createdAt", "DESC");    
+    
+        // Filter berdasarkan status peminjaman    
+        if (filter) {    
+            queryBuilder.where("peminjaman.statusPeminjaman = :filter", { filter });    
+        }    
+    
+        // Search berdasarkan nama pasien atau no RM pasien    
+        if (search) {    
+            queryBuilder.andWhere("riwayatPasien.namaPasien LIKE :search OR riwayatPasien.nomerRM LIKE :search", {    
+                search: `%${search}%`    
+            });    
+        }    
+    
+        const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;    
+        const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1    
+        const skip = (currentPage - 1) * (dynamicLimit || 0);    
+    
+        const [data, totalCount] = await queryBuilder    
+            .skip(skip)    
+            .take(dynamicLimit || undefined)    
+            .getManyAndCount();    
+    
+        // Memetakan data untuk format yang diinginkan  
+        const modifiedData = data.map((peminjaman, index) => {    
+            return {    
+                No: index + 1, // Menambahkan nomor urut    
+                NamaPasien: peminjaman.RiwayatPasiens.Pasiens.namaPasien, // Ganti dengan field yang sesuai    
+                NoRMPasien: peminjaman.RiwayatPasiens.Pasiens.nomerRM, // Ganti dengan field yang sesuai    
+                TanggalBerobat: peminjaman.tanggalDikembalikan, // Sesuaikan jika ada field lain    
+                DiagnosaAkhir: peminjaman.RiwayatPasiens.diagnosaAkhir, // Sesuaikan jika ada field lain    
+                Pengobatan: peminjaman.alasanPeminjaman, // Sesuaikan jika ada field lain    
+                KeadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.keadaanKeluarRS, // Sesuaikan jika ada field lain    
+                StatusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman, // Sesuaikan jika ada field lain    
+            };    
+        });    
+    
+        return res.status(200).send(successResponse('Get Peminjaman Rekam Medis Success', {    
+            data: modifiedData,    
+            totalCount,    
+            currentPage,    
+            totalPages: Math.ceil(totalCount / (dynamicLimit || 1)),    
+        }, 200));    
+    
+    } catch (error) {    
+        return res.status(500).json({ msg: error.message });    
+    }    
+};  
 
+
+  
 export const getPeminjamanRekamMedisById = async (req: Request, res: Response) => {  
     try {  
-        const { id } = req.params; // Ambil ID dari parameter URL  
+        const id = req.params.id;  
   
-        const peminjaman = await peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")  
-            .leftJoinAndSelect("peminjaman.Dokters", "dokter")  
-            .leftJoinAndSelect("peminjaman.RiwayatPasiens", "pasien")  
-            .where("peminjaman.id = :id", { id })  
-            .getOne();  
+        // Cek akses pengguna yang sedang login  
+        const userAccess = await userRepository.findOneBy({ id: req.jwtPayload.id });  
   
+        if (!userAccess || userAccess.role !== 'PETUGAS') {  
+            return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can access this resource', 403));  
+        }  
+  
+        // Mencari peminjaman rekam medis berdasarkan ID  
+        const peminjaman = await peminjamanRekamMedisRepository.findOne({  
+            where: { id: id },  
+            relations: ["Dokters", "RiwayatPasiens"], // Menyertakan relasi yang diperlukan  
+        });  
+  
+        // Jika peminjaman tidak ditemukan  
         if (!peminjaman) {  
             return res.status(404).send(errorResponse('Peminjaman Rekam Medis not found', 404));  
         }  
   
-        const modifiedData = {  
-            no: peminjaman.id,  
-            namaPasien: peminjaman.RiwayatPasiens.namaPasien,  
-            noRMPasien: peminjaman.RiwayatPasiens.nomerRM,  
-            tanggalBerobat: peminjaman.tanggalDikembalikan,  
-            diagnosaAkhir: peminjaman.RiwayatPasiens.RiwayatPasiens.diagnosaAkhir || "N/A",  
-            pengobatan: peminjaman.alasanPeminjaman,  
-            keadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.RiwayatPasiens.keadaanKeluarRS || "N/A",  
-            statusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman,  
-        };  
-  
-        return res.status(200).send(successResponse('Get Peminjaman Rekam Medis by ID Success', {  
-            data: modifiedData,  
-        }, 200));  
+        return res.status(200).send(successResponse("Get Peminjaman Rekam Medis by ID Success", { data: peminjaman }, 200));  
   
     } catch (error) {  
-        return res.status(500).json({ msg: error.message });  
+        return res.status(500).send(errorResponse(error.message, 500));  
     }  
 };  
 
@@ -112,7 +111,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         alasanPeminjaman : Joi.string().required(),
         tanggalDikembalikan : Joi.date().required(),
         Dokter : Joi.string().required(),
-        Pasien : Joi.string().required(),
+        RekamMedis : Joi.string().required(),
 
 
     }).validate(input);
@@ -137,19 +136,19 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         return res.status(422).send(errorResponse('Invalid Dokter ID: Dokter not found', 422));  
     } 
 
-    const pasien = await pasienRepository.findOneBy({ id: body.Pasien });  
-    if (!pasien) {  
-        return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
+    const RiwayatPasien = await riwayatPasienRepository.findOneBy({ id: body.RekamMedis });  
+    if (!RiwayatPasien) {  
+        return res.status(422).send(errorResponse('Invalid Rekam Medis Pasien ID: Rekam Medis Pasien not found', 422));  
     } 
 
-    const checkStatusRM = await pasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
+    const checkStatusRM = await riwayatPasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
     if (!checkStatusRM) {
         return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
     }
         const newPeminjamanRekamMedis = new peminjamanRekamMedis()
         newPeminjamanRekamMedis.alasanPeminjaman = body.alasanPeminjaman
         newPeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
-        newPeminjamanRekamMedis.RiwayatPasiens = pasien
+        newPeminjamanRekamMedis.RiwayatPasiens = RiwayatPasien
         newPeminjamanRekamMedis.Dokters = dokter
         
         await peminjamanRekamMedisRepository.save(newPeminjamanRekamMedis)
@@ -184,9 +183,11 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
         return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create users', 403));  
     }  
 
-        const updateStatusRM = await pasienRepository.findOneBy({id})
+        const updateStatusRM = await riwayatPasienRepository.findOneBy({id})
+
         updateStatusRM.statusPeminjaman = body.status
-        await pasienRepository.save(updateStatusRM)
+
+        await riwayatPasienRepository.save(updateStatusRM)
         console.log(updateStatusRM)
         return res.status(200).send(successResponse("Update Status Peminjaman Rekam Medis Success", { data: updateStatusRM }, 200))
 
@@ -206,7 +207,7 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         alasanPeminjaman : Joi.string().required(),
         tanggalDikembalikan : Joi.date().required(),
         Dokter : Joi.string().required(),
-        Pasien : Joi.string().required(),
+        RekamMedis : Joi.string().required(),
 
 
     }).validate(input);
@@ -233,19 +234,19 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         return res.status(422).send(errorResponse('Invalid Dokter ID: Dokter not found', 422));  
     } 
 
-    const pasien = await pasienRepository.findOneBy({ id: body.Pasien });  
-    if (!pasien) {  
-        return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
+    const Riwayatpasien = await riwayatPasienRepository.findOneBy({ id: body.RekamMedis });  
+    if (!RiwayatPasien) {  
+        return res.status(422).send(errorResponse('Invalid Rekam Medis Pasien ID: Rekam Medis Pasien not found', 422));  
     } 
 
-    const checkStatusRM = await pasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
+    const checkStatusRM = await riwayatPasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
     if (!checkStatusRM) {
         return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
     }
         const updatePeminjamanRekamMedis = await peminjamanRekamMedisRepository.findOneBy({id})
         updatePeminjamanRekamMedis.alasanPeminjaman = body.alasanPeminjaman
         updatePeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
-        updatePeminjamanRekamMedis.RiwayatPasiens = pasien
+        updatePeminjamanRekamMedis.RiwayatPasiens = Riwayatpasien
         updatePeminjamanRekamMedis.Dokters = dokter
         
         await peminjamanRekamMedisRepository.save(updatePeminjamanRekamMedis)

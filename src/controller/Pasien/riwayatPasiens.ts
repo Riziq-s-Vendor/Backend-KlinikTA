@@ -3,7 +3,7 @@ import { AppDataSource } from "../../data-source";
 import Joi, { equal, required, string } from "joi";
 import { User,UserRole } from "../../model/User";
 import { Pasien } from "../../model/Pasien";
-import { RiwayatPasien } from "../../model/RiwayatPasien";
+import { RiwayatPasien,StatusRM } from "../../model/RiwayatPasien";
 import exp from "constants";
 import { Equal } from 'typeorm'; // Pastikan Equal diimpor dari typeorm
 
@@ -215,6 +215,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.perjalananPeyakit = body.perjalananPeyakit
         newRekamMedis.sebabMeninggal = body.sebabMeninggal
         newRekamMedis.usulTidakLanjut = body.sebabMeninggal
+        newRekamMedis.statusPeminjaman = StatusRM.TERSEDIA
         await riwayatPasienRepository.save(newRekamMedis);
 
       
