@@ -213,6 +213,10 @@ export const getUserById =  async (req : Request, res : Response) =>{
         } 
 
 
+        user.eTTD = user.eTTD ? `public/image/eTTDDokter/${user.eTTD.replace(/\\/g, '/')}` : null; // Ganti dengan domain Anda  
+
+
+
         
 
         return res.status(200).send(successResponse("Get User by ID Success", { data: user }, 200));
