@@ -97,27 +97,9 @@ export const getPasienById = async (req: Request, res: Response) => {
         if (!pasien) {    
             return res.status(404).json({ msg: 'Pasien tidak ditemukan' });    
         }    
-    
-        // Modifikasi data untuk menggabungkan TTL dan alamat    
-        const { tempatLahir, tanggalLahir, kelurahan_desa, kecamatan, kabupaten, ...rest } = pasien; // Destructuring untuk menghapus properti yang tidak diinginkan  
-          
-        // Format tanggal  
-        const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };  
-        const formattedDate = new Date(tanggalLahir).toLocaleDateString('id-ID', options); // Format sesuai dengan locale Indonesia  
   
-        // Mengubah format tanggal menjadi "18 November 2000"  
-        const [day, MONTH, year] = formattedDate.split(' ');  
-        const formattedTTL = `${day} ${MONTH.toLowerCase()} ${year}`; // Mengubah bulan menjadi huruf kecil  
-  
-        const modifiedPasien = {    
-            ...rest,  
-            TTL: `${tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
-            alamat: `${kelurahan_desa}, ${kecamatan}, ${kabupaten}`,    
-            tangalLahir :`${tanggalLahir}`     
-
-        };    
     
-        return res.status(200).send(successResponse("Get Pasien by ID Success", { data: modifiedPasien }, 200));    
+        return res.status(200).send(successResponse("Get Pasien by ID Success", { data: pasien }, 200));    
     
     } catch (error) {    
         res.status(500).json({ msg: error.message });    
