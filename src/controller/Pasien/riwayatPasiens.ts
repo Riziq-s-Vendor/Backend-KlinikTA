@@ -149,6 +149,9 @@ export const getDokterAndPasienById = async (req: Request, res: Response) => {
             return res.status(404).send(errorResponse('Pasien not found', 404));
         }
 
+        dokter.eTTD = dokter.eTTD ? `${dokter.eTTD.replace(/\\/g, '/')}` : null; // Ganti dengan domain Anda  
+
+
         // Mengembalikan data dokter dan pasien dalam satu response
         return res.status(200).send(successResponse("Get Dokter and Pasien Success", {
             data: {
