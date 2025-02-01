@@ -128,6 +128,37 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
     }  
 }  
 
+export const getDokterAndPasienById = async (req: Request, res: Response) => {
+    try {
+        const { dokterId, pasienId } = req.params; // Mengambil ID dokter dan pasien dari parameter URL
+
+        // Mencari dokter berdasarkan ID dan role DOKTER
+        const dokter = await userRepository.findOneBy({ id: dokterId, role: UserRole.DOKTER });
+
+        // Mencari pasien berdasarkan ID
+        const pasien = await pasienRepository.findOneBy({ id: pasienId });
+
+        // Jika dokter atau pasien tidak ditemukan, kembalikan error
+        if (!dokter) {
+            return res.status(404).send(errorResponse('Dokter not found', 404));
+        }
+        if (!pasien) {
+            return res.status(404).send(errorResponse('Pasien not found', 404));
+        }
+
+        // Mengembalikan data dokter dan pasien dalam satu response
+        return res.status(200).send(successResponse("Get Dokter and Pasien Success", {
+            data: {
+                dokter,
+                pasien,
+            },
+        }, 200));
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: error.message });
+    }
+};
 
 export const createRekamMedis = async (req: Request, res: Response) => {
     const createRekamMedisSchema = (input) => Joi.object({
