@@ -119,7 +119,10 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
             dokter: Dokters.namaLengkap, // Menyertakan nama dokter  
             TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
+            ettd : Dokters.eTTD?`${Dokters.eTTD.replace(/\\/g, '/')}` : null
+  
         };  
+
   
         return res.status(200).send(successResponse("Get Rekam Medis by ID Success", { data: modifiedRekamMedis }, 200));  
   
