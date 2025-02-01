@@ -82,34 +82,33 @@ export const getPasien = async (req: Request, res: Response) => {
 export const getPasienById = async (req: Request, res: Response) => {    
     try {    
         const id = req.params.id;    
-    
+
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id });    
-    
+
         if (!userAcces) {    
             return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }));    
         }    
-    
-        // Mengambil data pasien berdasarkan ID    
+
         const pasien = await pasienRepository.findOne({    
-            where: { id: id }    
+            where: { id: id },    
+            relations: ['RiwayatPasiens'] 
         });    
-    
+
         if (!pasien) {    
             return res.status(404).json({ msg: 'Pasien tidak ditemukan' });    
         }    
-  
-    
-        return res.status(200).send(successResponse("Get Pasien by ID Success", { data: pasien }, 200));    
-    
+
+        return res.status(200).send(successResponse("Get Pasien by ID Success", { 
+            data: pasien 
+        }, 200));    
+
     } catch (error) {    
         res.status(500).json({ msg: error.message });    
     }    
-}  
+};
+
 
  
-
-
-
 export const createPasien = async (req: Request, res: Response) => {
     const createPasienSchema = (input) => Joi.object({
         namaPasien: Joi.string().required(),

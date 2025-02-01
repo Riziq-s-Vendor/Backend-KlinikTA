@@ -118,9 +118,14 @@ export class Pasien{
     @CreateDateColumn()
     createdAt: Date;
     
+    // ini aku komen dulu ya mas, dihapus takut kepake di endpoint lain wkwk
+    // @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
+    // public RiwayatPasiens : RiwayatPasien
 
-    @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
-    public RiwayatPasiens : RiwayatPasien
+
+    // ini relasi biar kalau getpasien by id, rekam medis si pasien juga bisa ditampilin (kontroller getById aku modif dikit juga)
+    @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Pasiens)
+    public RiwayatPasiens : RiwayatPasien[]
 
  
 }

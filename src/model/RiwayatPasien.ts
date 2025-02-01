@@ -186,7 +186,7 @@ export class RiwayatPasien{
     public deletedAt: Date
 
     @ManyToOne (() => Pasien, (Pasiens) => Pasiens.RiwayatPasiens)
-    @JoinColumn()
+    @JoinColumn({name: "pasienId"})
     public Pasiens : Pasien
 
     @ManyToOne (() => User, (Dokters) => Dokters.RiwayatPasiens)
@@ -196,7 +196,7 @@ export class RiwayatPasien{
     @OneToMany (() => peminjamanRekamMedis, (peminjamanRekamMedis) => peminjamanRekamMedis.RiwayatPasiens)
     public peminjamanRekamMedis : peminjamanRekamMedis
 
-  
+
 
     
     
