@@ -97,6 +97,8 @@ export const getPeminjamanRekamMedisById = async (req: Request, res: Response) =
         if (!peminjaman) {  
             return res.status(404).send(errorResponse('Peminjaman Rekam Medis not found', 404));  
         }  
+
+        peminjaman.Dokters.eTTD = peminjaman.Dokters.eTTD?`${peminjaman.Dokters.eTTD.replace(/\\/g, '/')}` : null; 
   
         return res.status(200).send(successResponse("Get Peminjaman Rekam Medis by ID Success", { data: peminjaman }, 200));  
   
