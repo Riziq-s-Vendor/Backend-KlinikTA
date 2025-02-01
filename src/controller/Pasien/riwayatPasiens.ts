@@ -82,8 +82,6 @@ export const getRekamMedis = async (req: Request, res: Response) => {
 }  
 
 
-
-
 export const getRekamMedisById = async (req: Request, res: Response) => {  
     try {  
         const id = req.params.id;  
@@ -129,10 +127,6 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
         res.status(500).json({ msg: error.message });  
     }  
 }  
-
-
- 
-
 
 
 export const createRekamMedis = async (req: Request, res: Response) => {

@@ -196,12 +196,6 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
     }
 }
 
-
-
-
-
-
-
 export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =>{
     const updatePeminjamanRekamMedisSchema = (input) => Joi.object({
         alasanPeminjaman : Joi.string().required(),
@@ -258,8 +252,6 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         res.status(500).json({ msg: error.message })
     }
 }
-
-
 
 
 export const deletePeminjamanRekamMedis = async (req: Request, res: Response) => {

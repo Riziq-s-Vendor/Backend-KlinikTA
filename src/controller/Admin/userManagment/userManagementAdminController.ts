@@ -257,3 +257,30 @@ export const deleteUser = async (req: Request, res: Response) => {
 
 
 
+export const getDokter = async (req: Request, res: Response) => {
+    try {
+        const { limit: queryLimit, page } = req.query;
+
+        const queryBuilder = userRepository.createQueryBuilder('user')
+            .where('user.role = :role', { role: 'DOKTER' })
+            .orderBy('user.createdAt', 'DESC');
+
+        const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;
+        const currentPage = page ? parseInt(page as string) : 1;
+        const skip = (currentPage - 1) * (dynamicLimit || 0);
+
+        const [data, totalCount] = await queryBuilder
+            .skip(skip)
+            .take(dynamicLimit || undefined)
+            .getManyAndCount();
+
+        return res.status(200).send(successResponse('Get Dokter success', {
+            data,
+            totalCount,
+            currentPage,
+            totalPages: Math.ceil(totalCount / (dynamicLimit || 1)),
+        }, 200));
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};

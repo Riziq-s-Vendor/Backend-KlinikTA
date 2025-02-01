@@ -115,8 +115,9 @@ export class Pasien{
     @IsString()
     public riwayatPenyakit: string
 
-
-   
+    @CreateDateColumn()
+    createdAt: Date;
+    
 
     @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
     public RiwayatPasiens : RiwayatPasien
