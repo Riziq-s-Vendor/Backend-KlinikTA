@@ -25,7 +25,11 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
+<<<<<<< Updated upstream
     "node-cron": "^3.0.3",
+=======
+    "node-cron": "^2.0.3",
+>>>>>>> Stashed changes
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",

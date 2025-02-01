@@ -5,6 +5,7 @@ import { AppDataSource } from "./data-source"
 import router from "./routes/index"
 import path = require("path")
 import cron from 'node-cron';
+import { startCronJob } from "./controller/pushNotificationcron"
 
 
 AppDataSource.initialize().then(async () => {
@@ -20,12 +21,8 @@ AppDataSource.initialize().then(async () => {
     app.use('/', router)
     app.get("/", (req, res) => { res.send("API Running") })
     
-        // Contoh cron job yang berjalan setiap menit
-        cron.schedule('* * * * *', () => {
-            console.log('Cron job berjalan setiap menit: Hello World!');
-        });
+    startCronJob();
 
-        console.log("Cron job di-schedule");
 
     app.listen(process.env.APP_PORT, ()=> {console.log(`Server running at port ${process.env.APP_PORT}`)})
 
