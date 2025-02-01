@@ -115,7 +115,8 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
   
         const modifiedRekamMedis = {  
             ...rest,  
-            pasien: Pasiens.namaPasien, // Menyertakan nama pasien  
+            pasien: Pasiens.namaPasien, // Menyertakan nama pasien 
+            noRM : Pasiens.nomerRM, 
             dokter: Dokters.namaLengkap, // Menyertakan nama dokter  
             TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
