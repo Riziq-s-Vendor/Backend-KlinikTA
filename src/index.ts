@@ -13,7 +13,7 @@ AppDataSource.initialize().then(async () => {
     const app = express()
     app.use(cors({
         credentials: true,
-        origin: ['http://localhost:3000', 'http://localhost:3001','https://staging.cms.npcindonesia.or.id','https://staging.npcindonesia.or.id']
+        origin: ['http://localhost:3000', 'http://localhost:3001']
 }))
     app.use(bodyParser.json({limit: '1000mb'}))
     app.use(bodyParser.urlencoded({ extended: true }));
