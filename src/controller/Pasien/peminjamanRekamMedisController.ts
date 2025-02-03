@@ -50,7 +50,8 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
     
         // Memetakan data untuk format yang diinginkan  
         const modifiedData = data.map((peminjaman, index) => {    
-            return {    
+            return {  
+                id : peminjaman.id,  
                 No: index + 1, // Menambahkan nomor urut    
                 NamaPasien: peminjaman.RiwayatPasiens.Pasiens.namaPasien, // Ganti dengan field yang sesuai    
                 NoRMPasien: peminjaman.RiwayatPasiens.Pasiens.nomerRM, // Ganti dengan field yang sesuai    
