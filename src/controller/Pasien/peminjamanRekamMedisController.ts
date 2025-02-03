@@ -129,8 +129,8 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || user.role !== 'PETUGAS') {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create Peminjaman Rekam Medis', 403));  
+    if (!user || user.role !== 'DOKTER') {  
+        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
     }  
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
