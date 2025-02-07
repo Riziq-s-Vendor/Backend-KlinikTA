@@ -84,8 +84,8 @@ export const getPeminjamanRekamMedisById = async (req: Request, res: Response) =
         // Cek akses pengguna yang sedang login  
         const userAccess = await userRepository.findOneBy({ id: req.jwtPayload.id });  
   
-        if (!userAccess || userAccess.role !== 'PETUGAS') {  
-            return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can access this resource', 403));  
+        if (!userAccess || (userAccess.role !== 'PETUGAS' && userAccess.role !== 'ADMIN')) {  
+            return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can access this resource', 403));  
         }  
   
         // Mencari peminjaman rekam medis berdasarkan ID  
@@ -130,7 +130,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || user.role !== 'DOKTER') {  
+    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
         return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
     }  
 
@@ -182,8 +182,8 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || user.role !== 'PETUGAS') {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create users', 403));  
+    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create users', 403));  
     }  
 
         const updateStatusRM = await riwayatPasienRepository.findOneBy({id})
@@ -222,8 +222,8 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || user.role !== 'PETUGAS') {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS can create users', 403));  
+    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS abd ADMIN can create users', 403));  
     }  
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
