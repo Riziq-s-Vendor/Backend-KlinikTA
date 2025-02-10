@@ -6,11 +6,18 @@ import router from "./routes/index"
 import path = require("path")
 import cron from 'node-cron';
 import { startCronJob } from "./controller/pushNotificationcron"
+import { Server } from 'socket.io';
+import http from 'http';
+
+
+const app = express()
+const server = http.createServer(app);
+const io = new Server(server);
 
 
 AppDataSource.initialize().then(async () => {
 
-    const app = express()
+
     app.use(cors({
         credentials: true,
         origin: ['http://localhost:3000', 'http://localhost:3001']
@@ -20,10 +27,33 @@ AppDataSource.initialize().then(async () => {
     app.use('/public', express.static(path.join(__dirname, '../public')));
     app.use('/', router)
     app.get("/", (req, res) => { res.send("API Running") })
+
     
-    startCronJob();
+    io.on('connection', (socket) => {
+        console.log('A user connected');
+    
+        // Emit event to the client
+        socket.emit('message', 'Welcome to the WebSocket server!');
+    
+        // Handle disconnection
+        socket.on('disconnect', () => {
+            console.log('User disconnected');
+        });
+    });
+
+    
+    
+    // startCronJob();
 
 
     app.listen(process.env.APP_PORT, ()=> {console.log(`Server running at port ${process.env.APP_PORT}`)})
 
+
+
 }).catch(error => console.log(error))
+
+export {io}
+
+
+
+
