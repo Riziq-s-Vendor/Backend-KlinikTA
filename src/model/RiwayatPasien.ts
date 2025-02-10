@@ -7,7 +7,7 @@ import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
 export enum StatusRM {
     TERSEDIA = 'TERSEDIA',
     DIPINJAM = 'DIPINJAM',
-    TerlambatDikembalikan = ' TerlambatDikembalikan',
+    TERLAMBATDIKEMBALIKAN = ' TERLAMBATDIKEMBALIKAN',
 
 }
 
