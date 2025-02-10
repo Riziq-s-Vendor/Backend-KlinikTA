@@ -130,7 +130,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+    if (!user || user.role == 'DOKTER') {  
         return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
     }  
 
@@ -153,8 +153,14 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         newPeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
         newPeminjamanRekamMedis.RiwayatPasiens = RiwayatPasien
         newPeminjamanRekamMedis.Dokters = dokter
-        
         await peminjamanRekamMedisRepository.save(newPeminjamanRekamMedis)
+
+        RiwayatPasien.statusPeminjaman = StatusRM.DIPINJAM; // Assuming StatusRM.DIPINJAM is the status for borrowed medical records
+        await riwayatPasienRepository.save(RiwayatPasien);
+
+
+        
+
 
         console.log(newPeminjamanRekamMedis)
         return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis }, 200))
@@ -163,6 +169,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         res.status(500).json({ msg: error.message })
     }
 }
+
 
 export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Response) =>{
     const updateStatusPeminjamanRekamMedisSchema = (input) => Joi.object({
