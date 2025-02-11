@@ -131,19 +131,23 @@ export const createPasien = async (req: Request, res: Response) => {
 
     try {
         const body = req.body;
-        const schema = createPasienSchema(req.body);
+        // const schema = createPasienSchema(req.body);
 
-        console.log(req.body);  
+        // console.log(req.body);  
 
 
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema));
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema));
+        // }
 
         const user = await userRepository.findOneBy({ id: req.jwtPayload.id });
       // Validasi role pengguna yang sedang login  
-      if (!user || user.role == 'DOKTER' ) {  
-        return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
+    //   if (!user || user.role == 'DOKTER' ) {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
+    // }  
+
+    if (!user ) {  
+        return res.status(403).send(errorResponse('User not Authoorized', 403));  
     }  
 
      // Query untuk mendapatkan `nomerRM` terakhir
@@ -212,11 +216,11 @@ export const updatePasien = async (req : Request, res: Response) =>{
         const body = req.body
         const id = req.params.id;
         const pasienId = id
-        const schema = updatePasienSchema(req.body)
+        // const schema = updatePasienSchema(req.body)
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
@@ -224,9 +228,11 @@ export const updatePasien = async (req : Request, res: Response) =>{
             return res.status(200).send(successResponse('Add Event is Not Authorized', { data: userAcces }))
         }
 
-        if (!userAcces || userAcces.role !== 'ADMIN' ) {  
-            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can update pasien', 403));  
-        }  
+        // if (!userAcces || userAcces.role !== 'ADMIN' ) {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN can update pasien', 403));  
+        // }  
+
+  
 
         const updatePasien = await pasienRepository.findOneBy({ id });
         updatePasien.namaPasien = body.namaPasien
@@ -263,9 +269,15 @@ export const deletePasien = async (req: Request, res: Response) => {
 
         // Cek apakah pengguna memiliki akses
         const userAccess = await userRepository.findOneBy({ id: req.jwtPayload.id });
-        if (!userAccess || userAccess.role !== 'ADMIN' ) {  
-            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can deleted users', 403));  
-        } 
+       
+       
+        // if (!userAccess || userAccess.role !== 'ADMIN' ) {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN can deleted users', 403));  
+        // } 
+
+        if (!userAccess) {
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAccess }))
+        }
 
         // Cari pasien berdasarkan ID
         const pasien = await pasienRepository.findOne({

@@ -84,9 +84,14 @@ export const getPeminjamanRekamMedisById = async (req: Request, res: Response) =
         // Cek akses pengguna yang sedang login  
         const userAccess = await userRepository.findOneBy({ id: req.jwtPayload.id });  
   
-        if (!userAccess || (userAccess.role !== 'PETUGAS' && userAccess.role !== 'ADMIN')) {  
-            return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can access this resource', 403));  
-        }  
+        // if (!userAccess || (userAccess.role !== 'PETUGAS' && userAccess.role !== 'ADMIN')) {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can access this resource', 403));  
+        // }  
+        if (!userAccess) {
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAccess }))
+        }
+
+        
   
         // Mencari peminjaman rekam medis berdasarkan ID  
         const peminjaman = await peminjamanRekamMedisRepository.findOne({  
@@ -121,18 +126,22 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
     try {
         const body = req.body
-        const schema = createPeminjamanRekamMedisSchema(req.body)
+        // const schema = createPeminjamanRekamMedisSchema(req.body)
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || user.role == 'DOKTER') {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
-    }  
+    // if (!user || user.role == 'DOKTER') {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
+    // }  
+
+    if (!user) {
+        return res.status(200).send(successResponse('User is Not Authorized', { data: user }))
+    }
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
     if (!dokter) {  
@@ -178,20 +187,25 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
 
     try {
         const body = req.body
-        const schema = updateStatusPeminjamanRekamMedisSchema(req.body)
+        // const schema = updateStatusPeminjamanRekamMedisSchema(req.body)
         const id = req.params.id;
 
 
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+    // if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create users', 403));  
+    // }  
+
+    if (!user) {  
         return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create users', 403));  
     }  
+
 
         const updateStatusRM = await riwayatPasienRepository.findOneBy({id})
 
@@ -218,20 +232,25 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
 
     try {
         const body = req.body
-        const schema = updatePeminjamanRekamMedisSchema(req.body)
+        // const schema = updatePeminjamanRekamMedisSchema(req.body)
         const id = req.params.id;
 
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
     const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
        // Validasi role pengguna yang sedang login  
-    if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
-        return res.status(403).send(errorResponse('Access Denied: Only PETUGAS abd ADMIN can create users', 403));  
+    // if (!user || (user.role !== 'PETUGAS' && user.role !== 'ADMIN')) {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only PETUGAS abd ADMIN can create users', 403));  
+    // }  
+
+    if (!user){  
+        return res.status(403).send(errorResponse('Access Denied: user is not authorized', 403));  
     }  
+
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
     if (!dokter) {  

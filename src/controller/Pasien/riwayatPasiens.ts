@@ -197,20 +197,25 @@ export const createRekamMedis = async (req: Request, res: Response) => {
 
     try {
         const body = req.body;
-        const schema = createRekamMedisSchema(req.body);
+        // const schema = createRekamMedisSchema(req.body);
 
-        console.log(req.body);  
+        // console.log(req.body);  
 
 
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema));
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema));
+        // }
 
         const user = await userRepository.findOneBy({ id: req.jwtPayload.id });
       // Validasi role pengguna yang sedang login  
-      if (!user || user.role !== 'DOKTER' ) {  
-        return res.status(403).send(errorResponse('Access Denied: Only DOKTER can create Rekam Medis', 403));  
+    //   if (!user || user.role !== 'DOKTER' ) {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only DOKTER can create Rekam Medis', 403));  
+    // }  
+
+    if (!user ) {  
+        return res.status(403).send(errorResponse('Access Denied: Not Authorrized', 403));  
     }  
+
 
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
         if (!dokter) {  
@@ -293,11 +298,11 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         const body = req.body
         const id = req.params.id;
         const pasienId = id
-        const schema = updateRekamMedisChema(req.body)
+        // const schema = updateRekamMedisChema(req.body)
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
@@ -305,9 +310,9 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
             return res.status(200).send(successResponse('Update User is Not Authorized', { data: userAcces }))
         }
 
-        if (!userAcces || userAcces.role !== 'DOKTER' ) {  
-            return res.status(403).send(errorResponse('Access Denied: Only DOKTER can update pasien', 403));  
-        }  
+        // if (!userAcces || userAcces.role !== 'DOKTER' ) {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only DOKTER can update pasien', 403));  
+        // }  
 
       
     
@@ -367,9 +372,15 @@ export const deleteRekamMedis = async (req: Request, res: Response) => {
         
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
-        if (!userAcces || userAcces.role !== 'DOKTER' ) {  
-            return res.status(403).send(errorResponse('Access Denied: Only DOKTER can delete rekam medis', 403));  
+        // if (!userAcces || userAcces.role !== 'DOKTER' ) {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only DOKTER can delete rekam medis', 403));  
+        // }  
+
+        if (!userAcces ) {  
+            return res.status(403).send(errorResponse('Access Denied: USer Not Authorized', 403));  
         }  
+
+        
 
 
         const rekamMedis = await riwayatPasienRepository.findOne({ 

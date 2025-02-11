@@ -24,6 +24,7 @@ export class peminjamanRekamMedis{
     @IsDate()
     public tanggalDikembalikan: Date
 
+    
     @CreateDateColumn()
     public createdAt: Date
 

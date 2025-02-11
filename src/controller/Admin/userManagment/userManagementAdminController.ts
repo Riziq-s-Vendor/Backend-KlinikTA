@@ -44,11 +44,11 @@ export const createUser = async (req : Request, res: Response) =>{
 
     try {
         const body = req.body
-        const schema = createUserSchema(req.body)
+        // const schema = createUserSchema(req.body)
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
         const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
@@ -97,16 +97,20 @@ export const updateUser = async (req : Request, res: Response) =>{
     try {
         const body = req.body
         const id = req.params.id;
-        const schema = updateUserSchema(req.body)
+        // const schema = updateUserSchema(req.body)
         
-        if ('error' in schema) {
-            return res.status(422).send(validationResponse(schema))
-        }
+        // if ('error' in schema) {
+        //     return res.status(422).send(validationResponse(schema))
+        // }
 
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
-        if (!userAcces || userAcces.role !== 'ADMIN') {  
-            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can update users', 403));  
+        // if (!userAcces || userAcces.role !== 'ADMIN') {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN can update users', 403));  
+        // }  
+
+        if (!userAcces) {  
+            return res.status(403).send(errorResponse('user is not authorized', 403));  
         }  
 
         const updateUser = await userRepository.findOneBy({ id });
@@ -155,7 +159,12 @@ export const getUser = async(req : Request, res: Response) =>{
             return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }))
         }
 
-        if (userAcces.role === 'ADMIN') {  
+        // if (userAcces.role === 'ADMIN') {  
+        //     const decryptedPassword = decrypt(userAcces.password);  
+        //     userAcces.password = decryptedPassword; // Ganti password dengan yang terdekripsi  
+        // } 
+
+        if (userAcces) {  
             const decryptedPassword = decrypt(userAcces.password);  
             userAcces.password = decryptedPassword; // Ganti password dengan yang terdekripsi  
         } 
@@ -170,7 +179,13 @@ export const getUser = async(req : Request, res: Response) =>{
     .take(dynamicLimit || undefined)
     .getManyAndCount();
 
-    if (userAcces.role === 'ADMIN') {  
+    // if (userAcces.role === 'ADMIN') {  
+    //     data.forEach(user => {  
+    //         user.password = decrypt(user.password); // Dekripsi password untuk setiap user  
+    //     });  
+    // }  
+
+    if (userAcces) {  
         data.forEach(user => {  
             user.password = decrypt(user.password); // Dekripsi password untuk setiap user  
         });  
@@ -197,9 +212,14 @@ export const getUserById =  async (req : Request, res : Response) =>{
         
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
-        if (!userAcces || userAcces.role !== 'ADMIN') {  
-            return res.status(403).send(errorResponse('Access Denied: Only ADMIN can deleted users', 403));  
-        }  
+        // if (!userAcces || userAcces.role !== 'ADMIN') {  
+        //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN can deleted users', 403));  
+        // }  
+
+        if (!userAcces) {  
+            return res.status(403).send(errorResponse('User is not authorized', 403));  
+        }   
+
         const user = await userRepository.findOne({
             where: { id : id },
         });
@@ -208,7 +228,12 @@ export const getUserById =  async (req : Request, res : Response) =>{
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        if (userAcces.role === 'ADMIN') {  
+        // if (userAcces.role === 'ADMIN') {  
+        //     user.password = decrypt(user.password); // Dekripsi password  
+        // } 
+
+        
+        if (userAcces) {  
             user.password = decrypt(user.password); // Dekripsi password  
         } 
 
