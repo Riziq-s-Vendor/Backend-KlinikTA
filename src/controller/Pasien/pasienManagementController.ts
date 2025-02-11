@@ -77,6 +77,36 @@ export const getPasien = async (req: Request, res: Response) => {
     }    
 }  
 
+export const CountPasien = async (req: Request, res: Response) => {
+    try {
+        const { limit: queryLimit, page: page, namaPasien } = req.query;
+
+        const limit = parseInt(queryLimit as string) || 10; // Default limit is 10
+        const offset = (parseInt(page as string) || 1 -1) * limit; // Default page is 1
+
+        const queryBuilder = pasienRepository.createQueryBuilder('Pasien')
+            .orderBy('Pasien.createdAt', 'DESC')
+            .limit(limit)
+            .offset(offset);
+
+        if (namaPasien) {
+            queryBuilder.where('Pasien.namaPasien LIKE :namaPasien', {
+                namaPasien: `%${namaPasien}%`
+            });
+        }
+
+        const [pasien, total] = await queryBuilder.getManyAndCount();
+
+        return res.status(200).json({
+            message: 'Total data Pasien',
+            total: total,
+        });
+    } catch (error) {
+        console.error("Error fetching pasien:", error);
+        return res.status(500).json({ message: "Failed to fetch pasien" });
+    }
+};
+
 
 
 export const getPasienById = async (req: Request, res: Response) => {    
