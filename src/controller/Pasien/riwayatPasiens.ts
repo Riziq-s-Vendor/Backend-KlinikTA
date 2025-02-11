@@ -18,6 +18,49 @@ const pasienRepository = AppDataSource.getRepository(Pasien);
 
 const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 
+
+export const analyzeRekamMedis = async (req: Request, res: Response) => {
+    try {
+        const rekamMedisList = await AppDataSource.getRepository(RiwayatPasien).find();
+
+        // Filter rekam medis yang memiliki nilai null dan hanya menampilkan field yang null (kecuali deletedAt)
+        const incompleteRecords = rekamMedisList.map(rekamMedis => {
+            const nullFields = Object.entries(rekamMedis)
+                .filter(([key, value]) => value === null && key !== 'deletedAt')
+                .reduce((acc, [key]) => ({ ...acc, [key]: null }), {});
+            
+            return Object.keys(nullFields).length > 0 ? { id: rekamMedis.id, ...nullFields } : null;
+        }).filter(record => record !== null);
+
+        return res.status(200).json({
+            message: 'Data rekam medis yang tidak lengkap',
+            data: incompleteRecords
+        });
+    } catch (error) {
+        console.error('Error analyzing rekam medis:', error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat menganalisis rekam medis.' });
+    }
+};
+
+export const countIncompleteRekamMedis = async (req: Request, res: Response) => {
+    try {
+        const rekamMedisList = await AppDataSource.getRepository(RiwayatPasien).find();
+
+        // Hitung jumlah rekam medis yang memiliki nilai null (kecuali deletedAt)
+        const totalIncompleteRecords = rekamMedisList.filter(rekamMedis => {
+            return Object.entries(rekamMedis).some(([key, value]) => value === null && key !== 'deletedAt');
+        }).length;
+
+        return res.status(200).json({
+            message: 'Total data rekam medis yang tidak lengkap',
+            total: totalIncompleteRecords
+        });
+    } catch (error) {
+        console.error('Error counting incomplete rekam medis:', error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat menghitung rekam medis yang tidak lengkap.' });
+    }
+};
+
 export const getRekamMedis = async (req: Request, res: Response) => {  
     try {  
         const { limit: queryLimit, page: page, nomerRM } = req.query; // Mengganti namaPasien dengan nomerRM untuk mencocokkan model  
@@ -79,7 +122,9 @@ export const getRekamMedis = async (req: Request, res: Response) => {
     } catch (error) {  
         res.status(500).json({ msg: error.message });  
     }  
-}  
+} ;
+
+
 
 
 export const getRekamMedisById = async (req: Request, res: Response) => {  
