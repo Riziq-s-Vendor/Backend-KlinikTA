@@ -1,11 +1,18 @@
 import { Router } from "express";
 import { checkJwt } from '../../utils/checkJwt'
-import {getPeminjamanRekamMedis,getPeminjamanRekamMedisById,createPeminjamanRekamMedis,updatePeminjamanRekamMedis,updateStatusPeminjamanRekamMedis,deletePeminjamanRekamMedis}  from '../../controller/Pasien/peminjamanRekamMedisController';
+import {getPeminjamanRekamMedis,
+        getPeminjamanRekamMedisById,
+        CountPeminjamanRekamMedisByStatusDipinjam,
+        createPeminjamanRekamMedis,
+        updatePeminjamanRekamMedis,
+        updateStatusPeminjamanRekamMedis,
+        deletePeminjamanRekamMedis}  from '../../controller/Pasien/peminjamanRekamMedisController';
 import { checkRekamMedisStatus } from "../../controller/Pasien/Change status & message peminjaman rm/checkRekamMedisStstus";
 
 const router = Router()
 
 router.get('/getPeminjamanRekamMedis', [checkJwt,getPeminjamanRekamMedis])
+router.get('/countPeminjamanRekamMedisDipinjam', [checkJwt,CountPeminjamanRekamMedisByStatusDipinjam])
 router.get('/getPeminjamanRekamMedisById/:id',[checkJwt,getPeminjamanRekamMedisById])
 router.post('/createPeminjamanRekamMedis',[checkJwt,createPeminjamanRekamMedis])
 router.put('/updatePeminjamanRekamMedisById/:id',[checkJwt,updatePeminjamanRekamMedis])
