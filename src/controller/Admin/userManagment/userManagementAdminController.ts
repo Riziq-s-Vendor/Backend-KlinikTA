@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AppDataSource } from "../../../data-source";
 import Joi, { required } from "joi";
-import { User } from "../../../model/User";
+import { User, UserRole } from "../../../model/User";
 import { encrypt,decrypt } from "../../../utils/CryptoData";
 import multer from 'multer';  
 import path from 'path';  
@@ -251,10 +251,6 @@ export const getUserById =  async (req : Request, res : Response) =>{
     }
 }
 
-
-
-
-
 export const deleteUser = async (req: Request, res: Response) => {
     try {
 
@@ -279,8 +275,6 @@ export const deleteUser = async (req: Request, res: Response) => {
         return res.status(400).send(errorResponse(error, 400))
     }
 }
-
-
 
 export const getDokter = async (req: Request, res: Response) => {
     try {
@@ -309,3 +303,50 @@ export const getDokter = async (req: Request, res: Response) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
+export const getTotalDokter = async (req: Request, res: Response) => {
+    try {
+        const count = await userRepository.count({
+            where: {
+                role: UserRole.DOKTER, // Assuming UserRole.DOKTER is defined in your User model
+            },
+        });
+
+        return res.status(200).send(successResponse("Total Dokter Retrieved Successfully", { total: count }, 200));
+    } catch (error) {
+        console.error("Error getting total dokter count:", error);
+        return res.status(500).send(errorResponse("Failed to retrieve total dokter count", 500));
+    }
+};
+
+export const getTotalAdmin = async (req: Request, res: Response) => {
+    try {
+        const count = await userRepository.count({
+            where: {
+                role: UserRole.ADMIN, // Assuming UserRole.ADMIN is defined in your User model
+            },
+        });
+
+        return res.status(200).send(successResponse("Total ADMIN Retrieved Successfully", { total: count }, 200));
+    } catch (error) {
+        console.error("Error getting total ADMIN count:", error);
+        return res.status(500).send(errorResponse("Failed to retrieve total ADMIN count", 500));
+    }
+};
+
+export const getTotalPetugas = async (req: Request, res: Response) => {
+    try {
+        const count = await userRepository.count({
+            where: {
+                role: UserRole.PETUGAS, // Assuming UserRole.PETUGAS is defined in your User model
+            },
+        });
+
+        return res.status(200).send(successResponse("Total PETUGAS Retrieved Successfully", { total: count }, 200));
+    } catch (error) {
+        console.error("Error getting total PETUGAS count:", error);
+        return res.status(500).send(errorResponse("Failed to retrieve total PETUGAS count", 500));
+    }
+};
+
