@@ -73,7 +73,51 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
     } catch (error) {    
         return res.status(500).json({ msg: error.message });    
     }    
-};  
+}; 
+
+export const CountPeminjamanRekamMedisByStatusDipinjam = async (req: Request, res: Response) => {
+    try {
+
+
+        const total = await peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")
+            .leftJoinAndSelect("peminjaman.Dokters", "dokter")
+            .leftJoinAndSelect("peminjaman.RiwayatPasiens", "riwayatPasien")
+            .leftJoinAndSelect("riwayatPasien.Pasiens", "Pasien")
+            .where("riwayatPasien.statusPeminjaman = :status", { status: StatusRM.DIPINJAM }) // Menggunakan enum StatusRM
+            .getCount();
+
+
+            return res.status(200).json({
+                message: 'Total data Rekam Medis dengan Status di pinjam',
+                total
+            });    
+        } catch (error) {
+        console.error("Error counting peminjaman rekam medis:", error);
+        return res.status(500).json({ message: "Terjadi kesalahan saat menghitung peminjaman rekam medis." });
+    }
+};
+
+export const CountPeminjamanRekamMedisByStatusTerlamabat = async (req: Request, res: Response) => {
+    try {
+
+
+        const total = await peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")
+            .leftJoinAndSelect("peminjaman.Dokters", "dokter")
+            .leftJoinAndSelect("peminjaman.RiwayatPasiens", "riwayatPasien")
+            .leftJoinAndSelect("riwayatPasien.Pasiens", "Pasien")
+            .where("riwayatPasien.statusPeminjaman = :status", { status: StatusRM.TERLAMBATDIKEMBALIKAN }) // Menggunakan enum StatusRM
+            .getCount();
+
+
+            return res.status(200).json({
+                message: 'Total data Rekam Medis dengan Status di Terlambat Di Kembalikan',
+                total
+            });    
+        } catch (error) {
+        console.error("Error counting peminjaman rekam medis:", error);
+        return res.status(500).json({ message: "Terjadi kesalahan saat menghitung peminjaman rekam medis." });
+    }
+};
 
 
   

@@ -3,6 +3,7 @@ import { checkJwt } from '../../utils/checkJwt'
 import {getPeminjamanRekamMedis,
         getPeminjamanRekamMedisById,
         CountPeminjamanRekamMedisByStatusDipinjam,
+        CountPeminjamanRekamMedisByStatusTerlamabat,
         createPeminjamanRekamMedis,
         updatePeminjamanRekamMedis,
         updateStatusPeminjamanRekamMedis,
@@ -13,6 +14,7 @@ const router = Router()
 
 router.get('/getPeminjamanRekamMedis', [checkJwt,getPeminjamanRekamMedis])
 router.get('/countPeminjamanRekamMedisDipinjam', [checkJwt,CountPeminjamanRekamMedisByStatusDipinjam])
+router.get('/countPeminjamanRekamMedisTerlamabat', [checkJwt,CountPeminjamanRekamMedisByStatusTerlamabat])
 router.get('/getPeminjamanRekamMedisById/:id',[checkJwt,getPeminjamanRekamMedisById])
 router.post('/createPeminjamanRekamMedis',[checkJwt,createPeminjamanRekamMedis])
 router.put('/updatePeminjamanRekamMedisById/:id',[checkJwt,updatePeminjamanRekamMedis])
