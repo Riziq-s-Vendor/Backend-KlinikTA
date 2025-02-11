@@ -2,6 +2,7 @@ import { Router } from "express";
 import { checkJwt } from '../../utils/checkJwt'
 import {
     getRekamMedis,
+    CountRekamMedis,
     getRekamMedisById,
     getDokterAndPasienById,
     createRekamMedis,updateRekamMedis,
@@ -10,12 +11,14 @@ import {
     countIncompleteRekamMedis
 
 }  from '../../controller/Pasien/riwayatPasiens';
+import { countReset } from "console";
 
 const router = Router()
 
 router.get('/analisis-rekam-medis', [checkJwt,analyzeRekamMedis])
 router.get('/count-analisis-rekam-medis', [checkJwt,countIncompleteRekamMedis])
 router.get('/getRekamMedis', [checkJwt,getRekamMedis])
+router.get('/count-rekam-medis', [checkJwt,CountRekamMedis])
 router.get('/getRekamMedisById/:id',[checkJwt,getRekamMedisById])
 router.get('/dokter-pasien/:dokterId/:pasienId', getDokterAndPasienById);
 router.post('/createRekamMedis',[checkJwt,createRekamMedis])

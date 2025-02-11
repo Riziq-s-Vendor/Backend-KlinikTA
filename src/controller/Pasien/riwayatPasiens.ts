@@ -124,6 +124,37 @@ export const getRekamMedis = async (req: Request, res: Response) => {
     }  
 } ;
 
+export const CountRekamMedis = async (req: Request, res: Response) => {
+    try {
+        const { limit: queryLimit, page: page, nomerRM } = req.query;
+
+        const limit = parseInt(queryLimit as string) || 10; // Default limit is 10
+        const offset = (parseInt(page as string) || 1 -1) * limit; // Default page is 1
+
+        const queryBuilder = riwayatPasienRepository.createQueryBuilder("RiwayatPasien")
+            .leftJoinAndSelect("RiwayatPasien.Pasiens", "Pasien")
+            .leftJoinAndSelect("RiwayatPasien.Dokters", "Dokter");
+
+        if (nomerRM) {
+            queryBuilder.where("Pasien.nomerRM = :nomerRM", { nomerRM });
+        }
+
+        const [result, total] = await queryBuilder
+            .orderBy("RiwayatPasien.createdAt", "DESC")
+            .limit(limit)
+            .offset(offset)
+            .getManyAndCount();
+
+        return res.status(200).json({
+            message: 'Total data Rekam Medis',
+            total
+        });
+    } catch (error) {
+        console.error("Error fetching rekam medis:", error);
+        return res.status(500).json({ message: "Failed to fetch rekam medis" });
+    }
+};
+
 
 
 
