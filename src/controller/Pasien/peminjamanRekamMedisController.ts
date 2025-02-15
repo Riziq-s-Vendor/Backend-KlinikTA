@@ -19,7 +19,7 @@ const pasienRepository = AppDataSource.getRepository(Pasien);
 
 export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {    
     try {    
-        const { limit: queryLimit, page, filter, search } = req.query;    
+        const { limit: queryLimit, page, status, search } = req.query;    
     
         const queryBuilder = peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")    
             .leftJoinAndSelect("peminjaman.Dokters", "dokter")    
@@ -27,9 +27,9 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
             .leftJoinAndSelect("riwayatPasien.Pasiens", "Pasien")
             .orderBy("peminjaman.createdAt", "DESC");    
     
-        // Filter berdasarkan status peminjaman    
-        if (filter) {    
-            queryBuilder.where("peminjaman.statusPeminjaman = :filter", { filter });    
+        // status berdasarkan status peminjaman    
+        if (status) {    
+    queryBuilder.andWhere("riwayatPasien.statusPeminjaman = :status", { status });    
         }    
     
         // Search berdasarkan nama pasien atau no RM pasien    
