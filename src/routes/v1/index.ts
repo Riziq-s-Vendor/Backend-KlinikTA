@@ -6,6 +6,8 @@ import RoutePasienManagement from './pasienManagementRouter'
 import RouteRekamMedis from './rekamMedisRouter'
 import RoutePeminjamanRekamMedis  from './peminajamanRekamMedisRoute'
 import RouterCheckStatusPeminjamanRM from './checkStatusPeminjamanRMRouter'
+import { getCounts } from '../../controller/dashboardCount'
+import { checkJwt } from '../../utils/checkJwt'
 
 
 
@@ -24,6 +26,8 @@ router.use('/pasienManagement',RoutePasienManagement)
 router.use('/rekamMedis',RouteRekamMedis)
 router.use('/peminjamanRekamMedis',RoutePeminjamanRekamMedis)
 router.use('/checkStatuspeminjamanRekamMedis',RouterCheckStatusPeminjamanRM)
+router.get('/countDashboard', [checkJwt,getCounts])
+
 
 
 

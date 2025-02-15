@@ -23,24 +23,22 @@ export const analyzeRekamMedis = async (req: Request, res: Response) => {
     try {
         const rekamMedisList = await AppDataSource.getRepository(RiwayatPasien).find();
 
-        // Filter rekam medis yang memiliki nilai null dan hanya menampilkan field yang null (kecuali deletedAt)
-        const incompleteRecords = rekamMedisList.map(rekamMedis => {
-            const nullFields = Object.entries(rekamMedis)
-                .filter(([key, value]) => value === null && key !== 'deletedAt')
-                .reduce((acc, [key]) => ({ ...acc, [key]: null }), {});
-            
-            return Object.keys(nullFields).length > 0 ? { id: rekamMedis.id, ...nullFields } : null;
-        }).filter(record => record !== null);
+        // Filter rekam medis yang memiliki nilai null atau string kosong
+        const incompleteRecords = rekamMedisList.filter(rekamMedis => {
+            return Object.entries(rekamMedis).some(([key, value]) => (value === null || value === '') && key !== 'deletedAt');
+        });
 
         return res.status(200).json({
             message: 'Data rekam medis yang tidak lengkap',
-            data: incompleteRecords
+            results: {data: incompleteRecords}
+            
         });
     } catch (error) {
         console.error('Error analyzing rekam medis:', error);
         return res.status(500).json({ message: 'Terjadi kesalahan saat menganalisis rekam medis.' });
     }
 };
+
 
 export const countIncompleteRekamMedis = async (req: Request, res: Response) => {
     try {
@@ -104,8 +102,10 @@ export const getRekamMedis = async (req: Request, res: Response) => {
   
             return {  
                 ...rest,  
-                pasien: Pasiens.namaPasien, // Menyertakan nama pasien  
-                dokter: Dokters.namaLengkap, // Menyertakan nama dokter,
+                pasien: Pasiens.id, // Menyertakan id pasien  
+                namaPasien: Pasiens.namaPasien, // Menyertakan nama pasien  
+                Dokter: Dokters.id, // Menyertakan nama dokter,
+                namaDokter: Dokters.namaLengkap, // Menyertakan nama dokter,
                 TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
                 alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
                 eTTd : Dokters.eTTD
@@ -191,9 +191,11 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
   
         const modifiedRekamMedis = {  
             ...rest,  
-            pasien: Pasiens.namaPasien, // Menyertakan nama pasien 
+            pasien: Pasiens.id, // Menyertakan id pasien  
+            namaPasien: Pasiens.namaPasien, // Menyertakan nama pasien  
             noRM : Pasiens.nomerRM, 
-            dokter: Dokters.namaLengkap, // Menyertakan nama dokter  
+            Dokter: Dokters.id, // Menyertakan nama dokter  
+            namaDokter: Dokters.namaLengkap, // Menyertakan nama dokter  
             TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
             ettd : Dokters.eTTD?`${Dokters.eTTD.replace(/\\/g, '/')}` : null
