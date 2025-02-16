@@ -21,7 +21,7 @@ router.put('/updatePeminjamanRekamMedisById/:id',[checkJwt,updatePeminjamanRekam
 router.put('/updateStatusPeminjamanRekamMedis/:id',[checkJwt,updateStatusPeminjamanRekamMedis])
 router.delete('/deletePeminjamanRekamMedis/:id',[checkJwt,deletePeminjamanRekamMedis])
 
-router.get('/check-rekam-medis-status', checkRekamMedisStatus);
+router.get('/check-rekam-medis-status', [checkJwt,checkRekamMedisStatus]);
 
 
 export default router

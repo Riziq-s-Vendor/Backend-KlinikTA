@@ -6,6 +6,9 @@ import { Pasien } from "../../../model/Pasien";
 import { RiwayatPasien,StatusRM } from "../../../model/RiwayatPasien";
 import { In,LessThan,Not,IsNull } from "typeorm";
 
+const { successResponse, errorResponse, validationResponse } = require('../../../utils/response')
+
+
 
 
 
@@ -19,6 +22,8 @@ const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 
 export const checkRekamMedisStatus = async (req: Request, res: Response) => {
   try {
+
+
     const rekamMedisList = await riwayatPasienRepository.find({
       where: { 
         statusPeminjaman: StatusRM.DIPINJAM,
@@ -40,7 +45,7 @@ export const checkRekamMedisStatus = async (req: Request, res: Response) => {
         
         const tglKembali = peminjaman.tanggalDikembalikan;
         if (!tglKembali || isNaN(new Date(tglKembali).getTime())) {
-          console.warn(`Invalid date for RM ${rekamMedis.id}:`, tglKembali);
+          console.warn(`❌ Invalid date for RM ${rekamMedis.id}:`, tglKembali);
           return false;
         }
         
@@ -54,10 +59,16 @@ export const checkRekamMedisStatus = async (req: Request, res: Response) => {
         { statusPeminjaman: StatusRM.TERLAMBATDIKEMBALIKAN }
       );
 
+      console.log("📢 Mengirim notifikasi ke FE:", idsToUpdate);
+
       io.emit('notification', {
         message: `${idsToUpdate.length} rekam medis terlambat`,
         details: idsToUpdate
       });
+    }
+
+    else {
+      console.log("✅ Tidak ada rekam medis terlambat.");
     }
 
     const updatedRecords = await riwayatPasienRepository.find({
