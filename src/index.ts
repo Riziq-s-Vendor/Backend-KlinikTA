@@ -4,15 +4,18 @@ import * as bodyParser from "body-parser"
 import { AppDataSource } from "./data-source"
 import router from "./routes/index"
 import path = require("path")
-import cron from 'node-cron';
-import { startCronJob } from "./controller/pushNotificationcron"
 import { Server } from 'socket.io';
 import http from 'http';
 
 
 const app = express()
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: ['http://localhost:3000', 'http://localhost:3001'],
+        methods: ['GET']
+    }
+});
 
 
 AppDataSource.initialize().then(async () => {
@@ -30,24 +33,24 @@ AppDataSource.initialize().then(async () => {
 
     
     io.on('connection', (socket) => {
-        console.log('A user connected');
+        console.log(`⚡ User connected: ${socket.id}`);
     
         // Emit event to the client
         socket.emit('message', 'Welcome to the WebSocket server!');
     
         // Handle disconnection
         socket.on('disconnect', () => {
-            console.log('User disconnected');
+            console.log(`❌ User disconnected: ${socket.id}`);
         });
     });
 
     
-    
-    // startCronJob();
 
 
-    app.listen(process.env.APP_PORT, ()=> {console.log(`Server running at port ${process.env.APP_PORT}`)})
 
+    server.listen(process.env.APP_PORT || 5000, () => {
+        console.log(`🚀 Server running at port ${process.env.APP_PORT || 5000}`);
+    });
 
 
 }).catch(error => console.log(error))
