@@ -5,6 +5,7 @@ import { User,UserRole } from "../../model/User";
 import { RiwayatPasien,StatusRM } from "../../model/RiwayatPasien";
 import { peminjamanRekamMedis } from "../../model/peminjamanRekamMedis";
 import { Pasien } from "../../model/Pasien";
+import { logActivity } from "../../model/logActivity";
 const { successResponse, errorResponse, validationResponse } = require('../../utils/response')
 
 
@@ -12,6 +13,7 @@ const userRepository = AppDataSource.getRepository(User);
 const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 const peminjamanRekamMedisRepository = AppDataSource.getRepository(peminjamanRekamMedis)
 const pasienRepository = AppDataSource.getRepository(Pasien);
+const logActivityRepository = AppDataSource.getRepository(logActivity)
 
 
 
@@ -201,6 +203,17 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
     if (!checkStatusRM) {
         return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
     }
+
+
+    const maxNoLog = await logActivityRepository
+    .createQueryBuilder("logActivity")
+    .select("MAX(logActivity.no)", "max")
+    .getRawOne();
+
+    // Hitung nomer berikutnya
+    const nextNo = (maxNoLog?.max || 0) + 1;
+
+
         const newPeminjamanRekamMedis = new peminjamanRekamMedis()
         newPeminjamanRekamMedis.alasanPeminjaman = body.alasanPeminjaman
         newPeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
@@ -210,6 +223,18 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
         RiwayatPasien.statusPeminjaman = StatusRM.DIPINJAM; // Assuming StatusRM.DIPINJAM is the status for borrowed medical records
         await riwayatPasienRepository.save(RiwayatPasien);
+
+
+        const newLogActivity = new logActivity();
+        newLogActivity.no = nextNo;
+        newLogActivity.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.id; // Assuming the medical record number is the ID of RiwayatPasiens
+        newLogActivity.waktu = new Date(); // Current time
+        newLogActivity.Petugas = user.id; // Assuming the user ID is the staff ID
+        newLogActivity.Dokter = newPeminjamanRekamMedis.Dokters.id;
+        newLogActivity.Aksi = "MEMINJAM";
+        newLogActivity.Deskripsi = `Dokter ${dokter.id} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.id} untuk keperluan ${body.alasanPeminjaman}`;
+
+        await logActivityRepository.save(newLogActivity);
 
 
         
