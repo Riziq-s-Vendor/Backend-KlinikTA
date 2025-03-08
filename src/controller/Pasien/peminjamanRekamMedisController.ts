@@ -178,7 +178,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         //     return res.status(422).send(validationResponse(schema))
         // }
 
-    const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
+    const user = await userRepository.findOneBy({ id: req.jwtPayload.id})
 
        // Validasi role pengguna yang sedang login  
     // if (!user || user.role == 'DOKTER') {  
@@ -189,12 +189,20 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         return res.status(200).send(successResponse('User is Not Authorized', { data: user }))
     }
 
+    const getNameByLogin =  await userRepository.findOneBy({namaLengkap : user.namaLengkap})
+
     const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
     if (!dokter) {  
         return res.status(422).send(errorResponse('Invalid Dokter ID: Dokter not found', 422));  
     } 
 
-    const RiwayatPasien = await riwayatPasienRepository.findOneBy({ id: body.RekamMedis });  
+    const RiwayatPasien = await riwayatPasienRepository.findOne({
+        where: { id: body.RekamMedis },
+        relations: { // This line is crucial
+            Pasiens: true // Include the Pasiens relation
+        }
+    });
+
     if (!RiwayatPasien) {  
         return res.status(422).send(errorResponse('Invalid Rekam Medis Pasien ID: Rekam Medis Pasien not found', 422));  
     } 
@@ -225,14 +233,15 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
         await riwayatPasienRepository.save(RiwayatPasien);
 
 
+
         const newLogActivity = new logActivity();
         newLogActivity.no = nextNo;
-        newLogActivity.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.id; // Assuming the medical record number is the ID of RiwayatPasiens
+        newLogActivity.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
         newLogActivity.waktu = new Date(); // Current time
-        newLogActivity.Petugas = user.id; // Assuming the user ID is the staff ID
-        newLogActivity.Dokter = newPeminjamanRekamMedis.Dokters.id;
+        newLogActivity.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
+        newLogActivity.Dokter = newPeminjamanRekamMedis.Dokters.namaLengkap;
         newLogActivity.Aksi = "MEMINJAM";
-        newLogActivity.Deskripsi = `Dokter ${dokter.id} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.id} untuk keperluan ${body.alasanPeminjaman}`;
+        newLogActivity.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
 
         await logActivityRepository.save(newLogActivity);
 
@@ -241,7 +250,7 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
 
         console.log(newPeminjamanRekamMedis)
-        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis }, 200))
+        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis,newLogActivity }, 200))
 
     }catch(error){
         res.status(500).json({ msg: error.message })
