@@ -373,8 +373,8 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         newLogActivityOnUpdatePeminjamanRekamMedis.waktu = new Date(); // Current time
         newLogActivityOnUpdatePeminjamanRekamMedis.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
         newLogActivityOnUpdatePeminjamanRekamMedis.Dokter = updatePeminjamanRekamMedis.Dokters.namaLengkap;
-        newLogActivityOnUpdatePeminjamanRekamMedis.Aksi = "MEMINJAM";
-        newLogActivityOnUpdatePeminjamanRekamMedis.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${updatePeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
+        newLogActivityOnUpdatePeminjamanRekamMedis.Aksi = "UPDATE DATA PEMINJAMAN REKAM MEDIS";
+        newLogActivityOnUpdatePeminjamanRekamMedis.Deskripsi = `Dokter ${dokter.namaLengkap} update data rekam medis nomor ${updatePeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
 
         await logActivityRepository.save(newLogActivityOnUpdatePeminjamanRekamMedis);
         console.log(updatePeminjamanRekamMedis)
