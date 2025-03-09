@@ -234,23 +234,23 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
 
 
-        const newLogActivity = new logActivity();
-        newLogActivity.no = nextNo;
-        newLogActivity.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
-        newLogActivity.waktu = new Date(); // Current time
-        newLogActivity.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
-        newLogActivity.Dokter = newPeminjamanRekamMedis.Dokters.namaLengkap;
-        newLogActivity.Aksi = "MEMINJAM";
-        newLogActivity.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
+        const newActivityLogOnCreatePeminjamanRekamMedis = new logActivity();
+        newActivityLogOnCreatePeminjamanRekamMedis.no = nextNo;
+        newActivityLogOnCreatePeminjamanRekamMedis.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
+        newActivityLogOnCreatePeminjamanRekamMedis.waktu = new Date(); // Current time
+        newActivityLogOnCreatePeminjamanRekamMedis.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
+        newActivityLogOnCreatePeminjamanRekamMedis.Dokter = newPeminjamanRekamMedis.Dokters.namaLengkap;
+        newActivityLogOnCreatePeminjamanRekamMedis.Aksi = "MEMINJAM";
+        newActivityLogOnCreatePeminjamanRekamMedis.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
 
-        await logActivityRepository.save(newLogActivity);
+        await logActivityRepository.save(newActivityLogOnCreatePeminjamanRekamMedis);
 
 
         
 
 
         console.log(newPeminjamanRekamMedis)
-        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis,newLogActivity }, 200))
+        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis,newActivityLogOnCreatePeminjamanRekamMedis }, 200))
 
     }catch(error){
         res.status(500).json({ msg: error.message })
@@ -335,7 +335,12 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         return res.status(422).send(errorResponse('Invalid Dokter ID: Dokter not found', 422));  
     } 
 
-    const Riwayatpasien = await riwayatPasienRepository.findOneBy({ id: body.RekamMedis });  
+    const Riwayatpasien = await riwayatPasienRepository.findOne({ 
+       where :  {id: body.RekamMedis} ,
+       relations : ['Pasiens']
+        
+    
+    });  
     if (!RiwayatPasien) {  
         return res.status(422).send(errorResponse('Invalid Rekam Medis Pasien ID: Rekam Medis Pasien not found', 422));  
     } 
@@ -344,6 +349,16 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
     if (!checkStatusRM) {
         return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
     }
+
+
+    const maxNoLog = await logActivityRepository
+    .createQueryBuilder("logActivity")
+    .select("MAX(logActivity.no)", "max")
+    .getRawOne();
+
+    // Hitung nomer berikutnya
+    const nextNo = (maxNoLog?.max || 0) + 1;
+
         const updatePeminjamanRekamMedis = await peminjamanRekamMedisRepository.findOneBy({id})
         updatePeminjamanRekamMedis.alasanPeminjaman = body.alasanPeminjaman
         updatePeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
@@ -352,8 +367,18 @@ export const updatePeminjamanRekamMedis = async (req : Request, res: Response) =
         
         await peminjamanRekamMedisRepository.save(updatePeminjamanRekamMedis)
 
+        const newLogActivityOnUpdatePeminjamanRekamMedis = new logActivity();
+        newLogActivityOnUpdatePeminjamanRekamMedis.no = nextNo;
+        newLogActivityOnUpdatePeminjamanRekamMedis.nomerRM = updatePeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
+        newLogActivityOnUpdatePeminjamanRekamMedis.waktu = new Date(); // Current time
+        newLogActivityOnUpdatePeminjamanRekamMedis.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
+        newLogActivityOnUpdatePeminjamanRekamMedis.Dokter = updatePeminjamanRekamMedis.Dokters.namaLengkap;
+        newLogActivityOnUpdatePeminjamanRekamMedis.Aksi = "MEMINJAM";
+        newLogActivityOnUpdatePeminjamanRekamMedis.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${updatePeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
+
+        await logActivityRepository.save(newLogActivityOnUpdatePeminjamanRekamMedis);
         console.log(updatePeminjamanRekamMedis)
-        return res.status(200).send(successResponse("update Peminjaman Rekam Medis Success", { data: updatePeminjamanRekamMedis }, 200))
+        return res.status(200).send(successResponse("update Peminjaman Rekam Medis Success", { data: updatePeminjamanRekamMedis,newLogActivityOnUpdatePeminjamanRekamMedis }, 200))
 
     }catch(error){
         res.status(500).json({ msg: error.message })
