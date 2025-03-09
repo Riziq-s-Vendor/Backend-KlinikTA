@@ -260,7 +260,8 @@ export const createPeminjamanRekamMedis = async (req : Request, res: Response) =
 
 export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Response) =>{
     const updateStatusPeminjamanRekamMedisSchema = (input) => Joi.object({
-        status : Joi.string().required(),
+        statusPeminjaman : Joi.string().required(),
+        tanggalDikembalikan : Joi.date().optional()
     }).validate(input);
 
     try {
@@ -287,9 +288,96 @@ export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Respo
 
         const updateStatusRM = await riwayatPasienRepository.findOneBy({id})
 
-        updateStatusRM.statusPeminjaman = body.status
+        if (!updateStatusRM) {
+            return res.status(404).send(errorResponse('Rekam medis tidak ditemukan', 404));
+        }
+
+
+        updateStatusRM.statusPeminjaman = body.statusPeminjaman
 
         await riwayatPasienRepository.save(updateStatusRM)
+
+        
+
+        
+        if (body.statusPeminjaman === "DIPINJAM") {
+            console.log("Meminjam data peminjaman dengan RiwayatPasiens ID:", id)
+            
+            const peminjaman = await AppDataSource.getRepository(peminjamanRekamMedis).findOne({
+                where: { RiwayatPasiens: { id: id } },
+                relations: ['RiwayatPasiens', 'RiwayatPasiens.Pasiens', 'Dokters'], // Adjusted relation names
+            });
+
+            if (peminjaman){
+                peminjaman.tanggalDikembalikan = body.tanggalDikembalikan
+                await AppDataSource.getRepository(peminjamanRekamMedis).save(peminjaman)
+
+                const maxNoLog = await logActivityRepository
+                .createQueryBuilder("logActivity")
+                .select("MAX(logActivity.no)", "max")
+                .getRawOne();
+            
+                // Hitung nomer berikutnya
+                const nextNo = (maxNoLog?.max || 0) + 1;
+    
+                const updateStatusDipinjamLogActivity = new logActivity();
+                updateStatusDipinjamLogActivity.no = nextNo;
+                updateStatusDipinjamLogActivity.nomerRM = peminjaman.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
+                updateStatusDipinjamLogActivity.waktu = new Date(); // Current time
+                updateStatusDipinjamLogActivity.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
+                updateStatusDipinjamLogActivity.Dokter = peminjaman.Dokters.namaLengkap;
+                updateStatusDipinjamLogActivity.Aksi = "Update Status Peminjaman Rekam Medis Menjadi DIPINJAM";
+                updateStatusDipinjamLogActivity.Deskripsi = `Dokter ${peminjaman.Dokters.namaLengkap} meminjam rekam medis nomor ${peminjaman.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${peminjaman.alasanPeminjaman}`;
+        
+                await logActivityRepository.save(updateStatusDipinjamLogActivity);
+            }
+
+          
+
+        
+        }
+
+
+
+        if (body.statusPeminjaman === "TERSEDIA") {
+            console.log("Menghapus data peminjaman dengan RiwayatPasiens ID:", id);
+          
+            // 1. Fetch the peminjaman record before deletion to log details
+            const peminjaman = await AppDataSource.getRepository(peminjamanRekamMedis).findOne({
+              where: { RiwayatPasiens: { id: id } },
+              relations: ['RiwayatPasiens', 'RiwayatPasiens.Pasiens', 'Dokters'], // Load required relations
+            });
+          
+            if (peminjaman) {
+              // 2. Generate next log number (same logic as DIPINJAM case)
+              const maxNoLog = await logActivityRepository
+                .createQueryBuilder("logActivity")
+                .select("MAX(logActivity.no)", "max")
+                .getRawOne();
+              const nextNo = (maxNoLog?.max || 0) + 1;
+          
+              // 3. Create log entry for "TERSEDIA" status
+              const updateStatusTersediaLogActivity = new logActivity();
+              updateStatusTersediaLogActivity.no = nextNo;
+              updateStatusTersediaLogActivity.nomerRM = peminjaman.RiwayatPasiens.Pasiens.nomerRM;
+              updateStatusTersediaLogActivity.waktu = new Date();
+              updateStatusTersediaLogActivity.Petugas = user.namaLengkap || "Unknown User";
+              updateStatusTersediaLogActivity.Dokter = peminjaman.Dokters.namaLengkap;
+              updateStatusTersediaLogActivity.Aksi = "Mengembalikan Peminjaman Rekam Medis";
+              updateStatusTersediaLogActivity.Deskripsi = `Dokter ${peminjaman.Dokters.namaLengkap} mengembalikan rekam medis nomor ${peminjaman.RiwayatPasiens.Pasiens.nomerRM}`;
+          
+              // 4. Save the log
+              await logActivityRepository.save(updateStatusTersediaLogActivity);
+          
+              // 5. Delete the peminjaman record after logging
+              await AppDataSource.getRepository(peminjamanRekamMedis).delete({ 
+                RiwayatPasiens: { id: id } 
+              });
+            } else {
+              console.warn("No peminjaman record found for deletion. Proceeding without logging.");
+            }
+          }
+
         console.log(updateStatusRM)
         return res.status(200).send(successResponse("Update Status Peminjaman Rekam Medis Success", { data: updateStatusRM }, 200))
 
