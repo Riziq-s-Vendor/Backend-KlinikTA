@@ -21,7 +21,7 @@ export const getAllLogActivities = async (req: Request, res: Response) => {
         const logActivities = await logActivityRepository.find({
             // relations : ['logPetugas']
         });
-        return res.status(200).send(successResponse(logActivities, 'Successfully retrieved all log activities'));
+        return res.status(200).send(successResponse({data : logActivities}, 'Successfully retrieved all log activities'));
     } catch (error) {
         console.error('Error fetching log activities:', error);
         return res.status(500).send(errorResponse('Internal server error', 500));
