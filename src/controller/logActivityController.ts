@@ -18,12 +18,42 @@ const logActivityRepository = AppDataSource.getRepository(logActivity)
 
 export const getAllLogActivities = async (req: Request, res: Response) => {
     try {
-        const logActivities = await logActivityRepository.find({
-            // relations : ['logPetugas']
-        });
-        return res.status(200).send(successResponse({data : logActivities}, 'Successfully retrieved all log activities'));
-    } catch (error) {
-        console.error('Error fetching log activities:', error);
-        return res.status(500).send(errorResponse('Internal server error', 500));
+        const {limit : queryLimit, page: page, nomerRM} = req.query
+
+        const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
+
+        if (!userAcces) {
+            return res.status(200).send(successResponse('User is Not Authorized', { data: userAcces }))
+        }
+
+        const queryBuilder = logActivityRepository.createQueryBuilder('logActivity')
+        .orderBy('logActivity.createdAt','DESC')
+
+        if(nomerRM) {
+            queryBuilder.where('logActivity.nomerRM LIKE :nomerRM',{
+                nomerRM : `%${nomerRM}%`
+            })
+        }
+
+        const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;
+        const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1
+        const skip = (currentPage - 1) * (dynamicLimit || 0);
+    
+        const [data, totalCount] = await queryBuilder
+        .skip(skip)
+        .take(dynamicLimit || undefined)
+        .getManyAndCount();
+
+
+        return res.status(200).send(successResponse('Get Log Activity Succes',
+            { 
+        
+        data, 
+        totalCount,
+        currentPage,
+        totalPages: Math.ceil(totalCount / (dynamicLimit || 1)), }, 200))
+        
+        }catch(error){
+            res.status(500).json({ msg: error.message })    
+        }
     }
-};
