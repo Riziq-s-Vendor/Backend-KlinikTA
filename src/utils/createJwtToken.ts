@@ -4,6 +4,6 @@ require('dotenv').config()
 
 export const createJwtToken = (payload: JwtPayload): string => {
   return jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: process.env.JWT_EXPIRATION,
+    expiresIn: process.env.JWT_EXPIRATION! // Tambahkan non-null assertion di sini
   })
 }
