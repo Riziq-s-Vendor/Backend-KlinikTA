@@ -17,6 +17,14 @@ export class peminjamanRekamMedis{
     @IsString()
     public alasanPeminjaman: string
 
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsDate()
+    public tanggalPeminjaman: Date
+
     @Column({
         default: null,
         nullable: true
