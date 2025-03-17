@@ -22,6 +22,24 @@ export class logActivity{
     @IsString()
     public nomerRM: string
 
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsDate()
+    public tanggalPeminjaman: Date
+
+    
+    @Column({
+        default: null,
+        nullable: true
+    })
+    @IsDate()
+    public tanggalDikembalikan: Date
+
+
+
     @Column({
         default: null,
         nullable: true
