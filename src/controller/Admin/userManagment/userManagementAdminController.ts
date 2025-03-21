@@ -57,6 +57,12 @@ export const createUser = async (req : Request, res: Response) =>{
         return res.status(403).send(errorResponse('Access Denied: Only ADMIN can create users', 403));  
     }  
 
+          // Cek apakah username sudah ada
+          const existingUser = await userRepository.findOne({ where: { userName: body.userName } });
+          if (existingUser) {
+              return res.status(400).json({ message: 'Username already exists' });
+          }
+
         const NewUser = new User()
         NewUser.namaLengkap = body.namaLengkap
         NewUser.userName = body.userName
