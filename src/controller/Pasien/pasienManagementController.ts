@@ -26,7 +26,7 @@ export const getPasien = async (req: Request, res: Response) => {
             .orderBy('Pasien.createdAt', 'DESC');    
     
         if (namaPasien) {    
-            queryBuilder.where('Pasien.namaPasien LIKE :namaPasien', {    
+            queryBuilder.where('Pasien.namaLengkap LIKE :namaLengkap', {    
                 namaPasien: `%${namaPasien}%`    
             });    
         }    
@@ -90,7 +90,7 @@ export const CountPasien = async (req: Request, res: Response) => {
             .offset(offset);
 
         if (namaPasien) {
-            queryBuilder.where('Pasien.namaPasien LIKE :namaPasien', {
+            queryBuilder.where('Pasien.namaLengkap LIKE :namaLengkap', {    
                 namaPasien: `%${namaPasien}%`
             });
         }
