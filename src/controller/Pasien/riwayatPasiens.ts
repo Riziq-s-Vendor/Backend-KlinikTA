@@ -21,7 +21,9 @@ const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 
 export const analyzeRekamMedis = async (req: Request, res: Response) => {
     try {
-        const rekamMedisList = await AppDataSource.getRepository(RiwayatPasien).find();
+        const rekamMedisList = await riwayatPasienRepository.find({
+            relations : ["Pasiens"]
+        });
 
         // Filter rekam medis yang memiliki nilai null atau string kosong
         const incompleteRecords = rekamMedisList.filter(rekamMedis => {
@@ -103,7 +105,7 @@ export const getRekamMedis = async (req: Request, res: Response) => {
             return {  
                 ...rest,  
                 pasien: Pasiens.id, // Menyertakan id pasien  
-                namaPasien: Pasiens.namaPasien, // Menyertakan nama pasien  
+                namaPasien: Pasiens.namaLengkap, // Menyertakan nama pasien  
                 Dokter: Dokters.id, // Menyertakan nama dokter,
                 namaDokter: Dokters.namaLengkap, // Menyertakan nama dokter,
                 TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
@@ -192,7 +194,7 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
         const modifiedRekamMedis = {  
             ...rest,  
             pasien: Pasiens.id, // Menyertakan id pasien  
-            namaPasien: Pasiens.namaPasien, // Menyertakan nama pasien  
+            namaPasien: Pasiens.namaLengkap, // Menyertakan nama pasien  
             noRM : Pasiens.nomerRM, 
             Dokter: Dokters.id, // Menyertakan nama dokter  
             namaDokter: Dokters.namaLengkap, // Menyertakan nama dokter  
