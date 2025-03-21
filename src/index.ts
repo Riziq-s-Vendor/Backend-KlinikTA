@@ -13,6 +13,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: ['http://localhost:3000', 'http://localhost:3001'],
+
+        //for staging
+        // origin: ['http://localhost:3000', 'http://localhost:3001','https://puskesmas-ngasem-fe.vercel.app/'],
+        
         methods: ['GET']
     }
 });
@@ -24,6 +28,9 @@ AppDataSource.initialize().then(async () => {
     app.use(cors({
         credentials: true,
         origin: ['http://localhost:3000', 'http://localhost:3001']
+        //for staging
+        // origin: ['http://localhost:3000', 'http://localhost:3001','https://puskesmas-ngasem-fe.vercel.app/','https://api.puskesmas-ngasem.cloud']
+
 }))
     app.use(bodyParser.json({limit: '1000mb'}))
     app.use(bodyParser.urlencoded({ extended: true }));
