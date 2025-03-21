@@ -8,6 +8,7 @@ export enum UserRole {
     ADMIN = 'ADMIN',
     PETUGAS = 'PETUGAS',
     DOKTER = 'DOKTER',
+    PERAWAT = 'PERAWAT'
 
 }
 
