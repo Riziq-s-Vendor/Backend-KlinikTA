@@ -3,12 +3,21 @@ import { Entity,OneToMany,PrimaryGeneratedColumn,Column,CreateDateColumn,UpdateD
 import { Pasien } from "./Pasien";
 import { User } from "./User";
 import { peminjamanRekamMedis } from "./peminjamanRekamMedis";
+import { autonamnesisRekamMedis } from "./AutonamnesisRekamMedis";
+import { objektifRekamMedis } from "./objektiRekamMedis";
+import { assessmentRekamMedis } from "./AssessmentRekamMedis";
+import { planningRekamMedis } from "./planningRekamMedis";
 
 export enum StatusRM {
     TERSEDIA = 'TERSEDIA',
     DIPINJAM = 'DIPINJAM',
     TERLAMBATDIKEMBALIKAN = 'TERLAMBATDIKEMBALIKAN',
 
+}
+
+export enum Edukasi {
+    POLAMAKAN = 'POLAMAKAN',
+    POLAAKTIFITAS = 'POLAAKTIFITAS',
 }
 
 
@@ -170,6 +179,149 @@ export class RiwayatPasien{
         @IsString()
         public statusPeminjaman: StatusRM
 
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public ku: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public kt: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public rpd: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public rpo: string
+    
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public rpk: string
+
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public vitalSignSensorium: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public td: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public hr: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public rr: string
+    
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public t: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public tb: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public bb: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public pemeriksaanFisik: string
+    
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public catatanKeperewatan: string
+
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public diagnosaPenyakit: string
+
+
+         @Column({
+                default: null,
+                nullable: true
+            })
+            @IsString()
+            public therapy: string
+        
+            @Column({
+                default: null,
+                nullable: true
+            })
+            @IsString()
+            public eso: string
+        
+            @Column({
+                default: null,
+                nullable: true
+            })
+            @IsString()
+            public rencanaPemeriksaanPenunjang: string
+        
+            @Column({
+                 type: 'enum',
+                enum: Edukasi,
+            })
+            @IsString()
+            public rencanaEdukasi: Edukasi
+        
+            @Column({
+                default: null,
+                nullable: true
+            })
+            @IsString()
+            public rencanaRujukan: string
+    
 
 
   
@@ -195,6 +347,30 @@ export class RiwayatPasien{
 
     @OneToMany (() => peminjamanRekamMedis, (peminjamanRekamMedis) => peminjamanRekamMedis.RiwayatPasiens)
     public peminjamanRekamMedis : peminjamanRekamMedis
+
+    //preparing for repeater input
+
+    // @ManyToOne(() => autonamnesisRekamMedis,(autonamnesis) => autonamnesis.rekamMedis)
+    // @JoinColumn()
+    // public autonamnesis : autonamnesisRekamMedis
+
+    
+    // @ManyToOne(() => objektifRekamMedis,(objekRekamMedis) => objekRekamMedis.rekamMedis)
+    // @JoinColumn()
+    // public objekRekamMedis : objektifRekamMedis
+
+    // @ManyToOne(() => assessmentRekamMedis,(assessment) => assessment.rekamMedis)
+    // @JoinColumn()
+    // public assessment : assessmentRekamMedis
+
+    
+    // @ManyToOne(() => planningRekamMedis,(planning) => planning.rekamMedis)
+    // @JoinColumn()
+    // public planning : planningRekamMedis
+
+
+
+
 
 
 
