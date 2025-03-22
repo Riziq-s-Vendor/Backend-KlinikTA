@@ -6,9 +6,10 @@ import { Pasien } from "../../model/Pasien";
 import { RiwayatPasien,StatusRM } from "../../model/RiwayatPasien";
 import exp from "constants";
 import { Equal } from 'typeorm'; // Pastikan Equal diimpor dari typeorm
-
-
-
+import { assessmentRekamMedis } from "../../model/AssessmentRekamMedis";
+import { autonamnesisRekamMedis } from "../../model/AutonamnesisRekamMedis";
+import { objektifRekamMedis } from "../../model/objektiRekamMedis";
+import { planningRekamMedis,Edukasi } from "../../model/planningRekamMedis";
 
 const { successResponse, errorResponse, validationResponse } = require('../../utils/response')
 
@@ -17,6 +18,14 @@ const userRepository = AppDataSource.getRepository(User);
 const pasienRepository = AppDataSource.getRepository(Pasien);
 
 const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
+
+const assessmentRekamMedisRepository = AppDataSource.getRepository(assessmentRekamMedis)
+
+const autonamnesisRekamMedisRepository = AppDataSource.getRepository(autonamnesisRekamMedis)
+
+const objekRekamMedisRepository = AppDataSource.getRepository(objektifRekamMedis)
+
+const planningRekamMedisRepository = AppDataSource.getRepository(planningRekamMedis)
 
 
 export const analyzeRekamMedis = async (req: Request, res: Response) => {
@@ -271,6 +280,28 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         perjalananPeyakit: Joi.string().optional(),  
         sebabMeninggal: Joi.string().optional(),  
         usulTidakLanjut: Joi.string().optional(),  
+        ku: Joi.string().optional(),  
+        kt: Joi.string().optional(),  
+        rpd: Joi.string().optional(),  
+        rpo: Joi.string().optional(),  
+        rpk: Joi.string().optional(),  
+        vitalSignSensorium: Joi.string().optional(),  
+        td: Joi.string().optional(),  
+        hr: Joi.string().optional(),  
+        rr: Joi.string().optional(),  
+        t: Joi.string().optional(),  
+        tb: Joi.string().optional(),
+        bb: Joi.string().optional(),  
+        pemeriksaanFisik: Joi.string().optional(),  
+        catatanKeperewatan: Joi.string().optional(),  
+        diagnosaPenyakit: Joi.string().optional(),  
+        therapy: Joi.string().optional(),  
+        eso: Joi.string().optional(),  
+        rencanaPemeriksaanPenunjang: Joi.string().optional(),  
+        rencanaEdukasi: Joi.string().optional(),  
+        rencanaRujukan: Joi.string().optional(),  
+
+
 
         
     }).validate(input);
@@ -307,7 +338,40 @@ export const createRekamMedis = async (req: Request, res: Response) => {
             return res.status(422).send(errorResponse('Invalid Pasien ID: Pasien not found', 422));  
         }  
 
-   
+        //preparing for repeater input
+        // const newAutonamnesisRekamMedis = new autonamnesisRekamMedis()
+        // newAutonamnesisRekamMedis.ku = body.ku
+        // newAutonamnesisRekamMedis.kt = body.kt
+        // newAutonamnesisRekamMedis.rpd = body.rpd
+        // newAutonamnesisRekamMedis.rpo = body.rpo
+        // newAutonamnesisRekamMedis.rpk = body.rpk
+        // await autonamnesisRekamMedisRepository.save(newAutonamnesisRekamMedis)
+
+        //preparing for repeater input
+        // const newObjektifRekamMedis = new objektifRekamMedis()
+        // newObjektifRekamMedis.td = body.td
+        // newObjektifRekamMedis.hr = body.hr
+        // newObjektifRekamMedis.rr = body.rr
+        // newObjektifRekamMedis.t = body.t
+        // newObjektifRekamMedis.tb = body.tb
+        // newObjektifRekamMedis.bb = body.bb
+        // newObjektifRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
+        // newObjektifRekamMedis.catatanKeperewatan = body.catatanKeperewatan
+        // await objekRekamMedisRepository.save(newObjektifRekamMedis)
+
+        //preparing for repeater input
+        // const newAssessmentRekamMedis = new assessmentRekamMedis()
+        // newAssessmentRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
+        // await assessmentRekamMedisRepository.save(newAssessmentRekamMedis)
+
+        //preparing for repeater input
+        // const newPlanningRekamMedis = new planningRekamMedis()
+        // newPlanningRekamMedis.therapy = body.therapy
+        // newPlanningRekamMedis.eso = body.eso
+        // newPlanningRekamMedis.rencanaPemeriksaanPenunjang = body.rencanaPemeriksaanPenunjang
+        // newPlanningRekamMedis.rencanaEdukasi = body.Edukasi
+        // newPlanningRekamMedis.rencanaRujukan = body.rencanaRujukan
+        // await planningRekamMedisRepository.save(newPlanningRekamMedis)
 
         // Membuat entitas pasien baru
         const newRekamMedis = new RiwayatPasien();
@@ -333,12 +397,37 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.sebabMeninggal = body.sebabMeninggal
         newRekamMedis.usulTidakLanjut = body.sebabMeninggal
         newRekamMedis.statusPeminjaman = StatusRM.TERSEDIA
+        newRekamMedis.ku = body.ku
+        newRekamMedis.kt = body.kt
+        newRekamMedis.rpd = body.rpd
+        newRekamMedis.rpo = body.rpo
+        newRekamMedis.rpk = body.rpk
+        newRekamMedis.vitalSignSensorium = body.vitalSignSensorium
+        newRekamMedis.td = body.td
+        newRekamMedis.hr = body.hr
+        newRekamMedis.rr = body.rr
+        newRekamMedis.t = body.t
+        newRekamMedis.tb = body.tb
+        newRekamMedis.bb = body.bb
+        newRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
+        newRekamMedis.catatanKeperewatan = body.catatanKeperewatan
+        newRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
+        newRekamMedis.therapy = body.therapy
+        newRekamMedis.eso = body.eso
+        newRekamMedis.rencanaPemeriksaanPenunjang = body.rencanaPemeriksaanPenunjang
+        newRekamMedis.rencanaEdukasi = body.Edukasi
+        newRekamMedis.rencanaRujukan = body.rencanaRujukan
+
+        // newRekamMedis.autonamnesis = newAutonamnesisRekamMedis
+        // newRekamMedis.objekRekamMedis = newObjektifRekamMedis
+        // newRekamMedis.assessment = newAssessmentRekamMedis
+        // newRekamMedis.planning = newPlanningRekamMedis
+
         await riwayatPasienRepository.save(newRekamMedis);
 
-      
-
         return res.status(200).send(successResponse("Create Rekam Medis Success", {
-            data: newRekamMedis,
+            data: newRekamMedis
+
         }, 200));
 
     } catch (error) {
@@ -430,6 +519,25 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.perjalananPeyakit = body.perjalananPeyakit
         updateRekamMedis.sebabMeninggal = body.sebabMeninggal
         updateRekamMedis.usulTidakLanjut = body.sebabMeninggal
+        updateRekamMedis.ku = body.ku
+        updateRekamMedis.kt = body.kt
+        updateRekamMedis.rpd = body.rpd
+        updateRekamMedis.rpo = body.rpo
+        updateRekamMedis.rpk = body.rpk
+        updateRekamMedis.td = body.td
+        updateRekamMedis.hr = body.hr
+        updateRekamMedis.rr = body.rr
+        updateRekamMedis.t = body.t
+        updateRekamMedis.tb = body.tb
+        updateRekamMedis.bb = body.bb
+        updateRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
+        updateRekamMedis.catatanKeperewatan = body.catatanKeperewatan
+        updateRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
+        updateRekamMedis.therapy = body.therapy
+        updateRekamMedis.eso = body.eso
+        updateRekamMedis.rencanaPemeriksaanPenunjang = body.rencanaPemeriksaanPenunjang
+        updateRekamMedis.rencanaEdukasi = body.Edukasi
+        updateRekamMedis.rencanaRujukan = body.rencanaRujukan
         await riwayatPasienRepository.save(updateRekamMedis)
 
      
