@@ -293,7 +293,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         tb: Joi.string().optional(),
         bb: Joi.string().optional(),  
         pemeriksaanFisik: Joi.string().optional(),  
-        catatanKeperewatan: Joi.string().optional(),  
+        catatanKeperawatan: Joi.string().optional(),  
         diagnosaPenyakit: Joi.string().optional(),  
         therapy: Joi.string().optional(),  
         eso: Joi.string().optional(),  
@@ -414,7 +414,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.tb = body.tb
         newRekamMedis.bb = body.bb
         newRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
-        newRekamMedis.catatanKeperewatan = body.catatanKeperewatan
+        newRekamMedis.catatanKeperewatan = body.catatanKeperawatan
         newRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
         newRekamMedis.therapy = body.therapy
         newRekamMedis.eso = body.eso
@@ -539,7 +539,7 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.tb = body.tb
         updateRekamMedis.bb = body.bb
         updateRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
-        updateRekamMedis.catatanKeperewatan = body.catatanKeperewatan
+        updateRekamMedis.catatanKeperewatan = body.catatanKeperawatan
         updateRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
         updateRekamMedis.therapy = body.therapy
         updateRekamMedis.eso = body.eso
