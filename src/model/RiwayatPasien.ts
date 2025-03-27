@@ -183,6 +183,21 @@ export class RiwayatPasien{
             default: null,
             nullable: true
         })
+        @IsDate()
+        public tanggalKunjungan: Date
+
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public subjektif: string
+    
+
+        @Column({
+            default: null,
+            nullable: true
+        })
         @IsString()
         public ku: string
     

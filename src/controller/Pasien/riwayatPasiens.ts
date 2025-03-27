@@ -209,7 +209,7 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
             namaDokter: Dokters.namaLengkap, // Menyertakan nama dokter  
             TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
-            ettd : Dokters.eTTD?`${Dokters.eTTD.replace(/\\/g, '/')}` : null
+            ettd : Dokters.eTTD?`${Dokters.eTTD.replace(/\\/g, '/')}` : null,
   
         };  
 
@@ -300,6 +300,8 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         rencanaPemeriksaanPenunjang: Joi.string().optional(),  
         rencanaEdukasi: Joi.string().optional(),  
         rencanaRujukan: Joi.string().optional(),  
+        tanggalKunjungan : Joi.date().optional(),
+        subjektif: Joi.string().optional(),  
 
 
 
@@ -397,6 +399,8 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.sebabMeninggal = body.sebabMeninggal
         newRekamMedis.usulTidakLanjut = body.sebabMeninggal
         newRekamMedis.statusPeminjaman = StatusRM.TERSEDIA
+        newRekamMedis.tanggalKunjungan = body.tanggalKunjungan
+        newRekamMedis.subjektif = body.subjektif
         newRekamMedis.ku = body.ku
         newRekamMedis.kt = body.kt
         newRekamMedis.rpd = body.rpd
@@ -460,7 +464,9 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         pengobatanTindakan: Joi.string().optional(),  
         perjalananPeyakit: Joi.string().optional(),  
         sebabMeninggal: Joi.string().optional(),  
-        usulTidakLanjut: Joi.string().optional(),       
+        usulTidakLanjut: Joi.string().optional(),    
+        tanggalKunjungan : Joi.date().optional(),
+        subjektif: Joi.string().optional(),     
     }).validate(input);
 
     try {
@@ -519,6 +525,8 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.perjalananPeyakit = body.perjalananPeyakit
         updateRekamMedis.sebabMeninggal = body.sebabMeninggal
         updateRekamMedis.usulTidakLanjut = body.sebabMeninggal
+        updateRekamMedis.tanggalKunjungan = body.tanggalKunjungan
+        updateRekamMedis.subjektif = body.subjektif
         updateRekamMedis.ku = body.ku
         updateRekamMedis.kt = body.kt
         updateRekamMedis.rpd = body.rpd
