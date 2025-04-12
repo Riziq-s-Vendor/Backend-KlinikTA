@@ -61,9 +61,9 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
                 NoRMPasien: peminjaman.RiwayatPasiens.Pasiens.nomerRM, // Ganti dengan field yang sesuai    
                 tanggalPeminjaman : peminjaman.tanggalPeminjaman,
                 tanggalDikembalikan: peminjaman.tanggalDikembalikan, // Sesuaikan jika ada field lain    
-                DiagnosaAkhir: peminjaman.RiwayatPasiens.diagnosaAkhir, // Sesuaikan jika ada field lain    
+                // DiagnosaAkhir: peminjaman.RiwayatPasiens.diagnosaAkhir, // Sesuaikan jika ada field lain    
                 Pengobatan: peminjaman.alasanPeminjaman, // Sesuaikan jika ada field lain    
-                KeadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.keadaanKeluarRS, // Sesuaikan jika ada field lain   
+                // KeadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.keadaanKeluarRS, // Sesuaikan jika ada field lain   
                 StatusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman, // Sesuaikan jika ada field lain
                 idRekamMedis : peminjaman.RiwayatPasiens.id,
 
