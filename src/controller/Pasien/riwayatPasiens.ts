@@ -577,6 +577,7 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.rpd = body.rpd
         updateRekamMedis.rpo = body.rpo
         updateRekamMedis.rpk = body.rpk
+        updateRekamMedis.vitalSignSensorium = body.vitalSignSensorium
         updateRekamMedis.td = body.td
         updateRekamMedis.hr = body.hr
         updateRekamMedis.rr = body.rr
