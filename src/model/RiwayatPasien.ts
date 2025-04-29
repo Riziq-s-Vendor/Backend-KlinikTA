@@ -49,6 +49,14 @@ export class RiwayatPasien{
         })
         @IsString()
         public subjektif: string
+
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public keluhan: string
+    
     
 
         @Column({

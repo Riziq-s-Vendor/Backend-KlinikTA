@@ -303,6 +303,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         perjalananPeyakit: Joi.string().optional(),  
         sebabMeninggal: Joi.string().optional(),  
         usulTidakLanjut: Joi.string().optional(),  
+        keluhan: Joi.string().optional(),  
         ku: Joi.string().optional(),  
         kt: Joi.string().optional(),  
         rpd: Joi.string().optional(),  
@@ -424,6 +425,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.statusPeminjaman = StatusRM.TERSEDIA
         newRekamMedis.tanggalKunjungan = body.tanggalKunjungan
         newRekamMedis.subjektif = body.subjektif
+        newRekamMedis.keluhan = body.keluhan
         newRekamMedis.ku = body.ku
         newRekamMedis.kt = body.kt
         newRekamMedis.rpd = body.rpd
@@ -487,7 +489,8 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         pengobatanTindakan: Joi.string().optional(),  
         perjalananPeyakit: Joi.string().optional(),  
         sebabMeninggal: Joi.string().optional(),  
-        usulTidakLanjut: Joi.string().optional(),  
+        usulTidakLanjut: Joi.string().optional(), 
+        keluhan :  Joi.string().optional(), 
         ku: Joi.string().optional(),  
         kt: Joi.string().optional(),  
         rpd: Joi.string().optional(),  
@@ -572,6 +575,7 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         // updateRekamMedis.usulTidakLanjut = body.sebabMeninggal
         updateRekamMedis.tanggalKunjungan = body.tanggalKunjungan
         updateRekamMedis.subjektif = body.subjektif
+        updateRekamMedis.keluhan = body.keluhan
         updateRekamMedis.ku = body.ku
         updateRekamMedis.kt = body.kt
         updateRekamMedis.rpd = body.rpd
