@@ -214,8 +214,8 @@ export class RiwayatPasien{
     @UpdateDateColumn()
     public updatedAt: Date
 
-    @DeleteDateColumn()
-    public deletedAt: Date
+    // @DeleteDateColumn()
+    // public deletedAt: Date
 
     @ManyToOne (() => Pasien, (Pasiens) => Pasiens.RiwayatPasiens)
     @JoinColumn({name: "pasienId"})

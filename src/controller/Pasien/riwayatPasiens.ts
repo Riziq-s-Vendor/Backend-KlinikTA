@@ -36,7 +36,7 @@ export const analyzeRekamMedis = async (req: Request, res: Response) => {
 
         // Filter rekam medis yang memiliki nilai null atau string kosong
         const incompleteRecords = rekamMedisList.filter(rekamMedis => {
-            return Object.entries(rekamMedis).some(([key, value]) => (value === null || value === '') && key !== 'deletedAt');
+            return Object.entries(rekamMedis).some(([key, value]) => (value === null || value === ''));
         });
 
         return res.status(200).json({
@@ -57,7 +57,7 @@ export const countIncompleteRekamMedis = async (req: Request, res: Response) => 
 
         // Hitung jumlah rekam medis yang memiliki nilai null (kecuali deletedAt)
         const totalIncompleteRecords = rekamMedisList.filter(rekamMedis => {
-            return Object.entries(rekamMedis).some(([key, value]) => value === null && key !== 'deletedAt');
+            return Object.entries(rekamMedis).some(([key, value]) => value === null);
         }).length;
 
         return res.status(200).json({
