@@ -210,6 +210,29 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
             TTL: `${Pasiens.tempatLahir}, ${formattedTTL}`, // Gunakan tanggal yang sudah diformat  
             alamat: `${Pasiens.kelurahan_desa}, ${Pasiens.kecamatan}, ${Pasiens.kabupaten}`,  
             ettd : Dokters.eTTD?`${Dokters.eTTD.replace(/\\/g, '/')}` : null,
+           statusPeminjaman : rekamMedis.statusPeminjaman,
+           tanggalKunjungan : rekamMedis.tanggalKunjungan,
+           subjektif : rekamMedis.subjektif,
+           ku : rekamMedis.ku,
+           kt : rekamMedis.kt,
+           rpd : rekamMedis.rpd,
+           rpo : rekamMedis.rpo,
+           rpk : rekamMedis.rpk,
+           vitalSignSensorium : rekamMedis.vitalSignSensorium,
+           td : rekamMedis.td,
+           hr : rekamMedis.hr,
+           rr : rekamMedis.rr,
+           t : rekamMedis.t,
+           tb : rekamMedis.tb,
+           bb : rekamMedis.bb,
+           pemeriksaanFisik : rekamMedis.pemeriksaanFisik,
+           catatanKeperawatan : rekamMedis.catatanKeperewatan,
+           diagnosaPenyakit : rekamMedis.diagnosaPenyakit,
+           therapy : rekamMedis.therapy,
+           eso : rekamMedis.eso,
+           rencanaPemeriksaanPenunjang : rekamMedis.rencanaPemeriksaanPenunjang,
+           rencanaEdukasi : rekamMedis.rencanaEdukasi,
+           rencanaRujukan : rekamMedis.rencanaRujukan
   
         };  
 
@@ -285,7 +308,7 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         rpd: Joi.string().optional(),  
         rpo: Joi.string().optional(),  
         rpk: Joi.string().optional(),  
-        vitalSignSensorium: Joi.string().optional(),  
+        vitalSignSensorium : Joi.string().optional(),  
         td: Joi.string().optional(),  
         hr: Joi.string().optional(),  
         rr: Joi.string().optional(),  
@@ -464,9 +487,31 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         pengobatanTindakan: Joi.string().optional(),  
         perjalananPeyakit: Joi.string().optional(),  
         sebabMeninggal: Joi.string().optional(),  
-        usulTidakLanjut: Joi.string().optional(),    
+        usulTidakLanjut: Joi.string().optional(),  
+        ku: Joi.string().optional(),  
+        kt: Joi.string().optional(),  
+        rpd: Joi.string().optional(),  
+        rpo: Joi.string().optional(),  
+        rpk: Joi.string().optional(),  
+        vitalSignSensorium : Joi.string().optional(),  
+        td: Joi.string().optional(),  
+        hr: Joi.string().optional(),  
+        rr: Joi.string().optional(),  
+        t: Joi.string().optional(),  
+        tb: Joi.string().optional(),
+        bb: Joi.string().optional(),  
+        pemeriksaanFisik: Joi.string().optional(),  
+        catatanKeperawatan: Joi.string().optional(),  
+        diagnosaPenyakit: Joi.string().optional(),  
+        therapy: Joi.string().optional(),  
+        eso: Joi.string().optional(),  
+        rencanaPemeriksaanPenunjang: Joi.string().optional(),  
+        rencanaEdukasi: Joi.string().optional(),  
+        rencanaRujukan: Joi.string().optional(),  
         tanggalKunjungan : Joi.date().optional(),
-        subjektif: Joi.string().optional(),     
+        subjektif: Joi.string().optional(),  
+
+
     }).validate(input);
 
     try {
@@ -539,7 +584,7 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.tb = body.tb
         updateRekamMedis.bb = body.bb
         updateRekamMedis.pemeriksaanFisik = body.pemeriksaanFisik
-        updateRekamMedis.catatanKeperewatan = body.catatanKeperawatan
+        updateRekamMedis.catatanKeperewatan = body.catatanKeparawatan
         updateRekamMedis.diagnosaPenyakit = body.diagnosaPenyakit
         updateRekamMedis.therapy = body.therapy
         updateRekamMedis.eso = body.eso
