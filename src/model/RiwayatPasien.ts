@@ -87,6 +87,12 @@ export class RiwayatPasien{
         @IsString()
         public rpk: string
 
+        @Column({
+            default: null,
+            nullable: true
+        })
+        @IsString()
+        public vitalSignSensorium: string
     
         @Column({
             default: null,
