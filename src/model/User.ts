@@ -71,8 +71,8 @@ export class User{
     @UpdateDateColumn()
     public updatedAt: Date
 
-    @DeleteDateColumn()
-    public deletedAt: Date
+    // @DeleteDateColumn()
+    // public deletedAt: Date
 
     @OneToMany (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.Dokters)
     public RiwayatPasiens : RiwayatPasien

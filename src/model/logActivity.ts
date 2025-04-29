@@ -83,7 +83,7 @@ export class logActivity{
     @UpdateDateColumn()
     public updatedAt: Date
 
-    @DeleteDateColumn()
-    public deletedAt: Date
+    // @DeleteDateColumn()
+    // public deletedAt: Date
 
 }

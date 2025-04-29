@@ -80,8 +80,8 @@ export class objektifRekamMedis{
     @UpdateDateColumn()
     public updatedAt: Date
 
-    @DeleteDateColumn()
-    public deletedAt: Date
+    // @DeleteDateColumn()
+    // public deletedAt: Date
 
     //preparing for repeater input
     // @OneToMany(() => RiwayatPasien,(rekamMedis) => rekamMedis.objekRekamMedis)

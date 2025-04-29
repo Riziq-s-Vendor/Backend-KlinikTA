@@ -39,8 +39,8 @@ export class peminjamanRekamMedis{
     @UpdateDateColumn()
     public updatedAt: Date
 
-    @DeleteDateColumn()
-    public deletedAt: Date
+    // @DeleteDateColumn()
+    // public deletedAt: Date
 
     
     @ManyToOne (() => RiwayatPasien, (RiwayatPasiens) => RiwayatPasiens.peminjamanRekamMedis)
