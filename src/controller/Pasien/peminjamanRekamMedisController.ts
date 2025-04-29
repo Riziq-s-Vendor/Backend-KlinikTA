@@ -68,7 +68,7 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
                 idRekamMedis : peminjaman.RiwayatPasiens.id,
                 subjektif : peminjaman.RiwayatPasiens.subjektif,
                 diagnosaPenyakit : peminjaman.RiwayatPasiens.diagnosaPenyakit,
-                keluhan : peminjaman.RiwayatPasiens.keluhan
+                // keluhan : peminjaman.RiwayatPasiens.keluhan
                 
 
 
