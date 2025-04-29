@@ -57,15 +57,20 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
             return {  
                 id : peminjaman.id,  
                 No: index + 1, // Menambahkan nomor urut    
-                NamaPasien: peminjaman.RiwayatPasiens.Pasiens.namaLengkap, // Ganti dengan field yang sesuai    
-                NoRMPasien: peminjaman.RiwayatPasiens.Pasiens.nomerRM, // Ganti dengan field yang sesuai    
+                NamaPasien: peminjaman.RiwayatPasiens.Pasiens.namaLengkap,     
+                NoRMPasien: peminjaman.RiwayatPasiens.Pasiens.nomerRM,     
                 tanggalPeminjaman : peminjaman.tanggalPeminjaman,
-                tanggalDikembalikan: peminjaman.tanggalDikembalikan, // Sesuaikan jika ada field lain    
-                // DiagnosaAkhir: peminjaman.RiwayatPasiens.diagnosaAkhir, // Sesuaikan jika ada field lain    
-                Pengobatan: peminjaman.alasanPeminjaman, // Sesuaikan jika ada field lain    
-                // KeadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.keadaanKeluarRS, // Sesuaikan jika ada field lain   
-                StatusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman, // Sesuaikan jika ada field lain
+                tanggalDikembalikan: peminjaman.tanggalDikembalikan,     
+                // DiagnosaAkhir: peminjaman.RiwayatPasiens.diagnosaAkhir, // sementara di komen menunggu mau di ganti dengan data apa     
+                Pengobatan: peminjaman.alasanPeminjaman,     
+                // KeadaanWaktuKeluarRS: peminjaman.RiwayatPasiens.keadaanKeluarRS, // sementara di komen menunggu mau di ganti dengan data apa 
+                StatusPeminjaman: peminjaman.RiwayatPasiens.statusPeminjaman, 
                 idRekamMedis : peminjaman.RiwayatPasiens.id,
+                subjektif : peminjaman.RiwayatPasiens.subjektif,
+                diagnosaPenyakit : peminjaman.RiwayatPasiens.diagnosaPenyakit
+                
+
+
 
 
             };    
