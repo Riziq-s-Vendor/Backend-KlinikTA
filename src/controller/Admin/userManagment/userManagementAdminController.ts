@@ -146,7 +146,25 @@ export const updateUser = async (req : Request, res: Response) =>{
 
 export const getUser = async(req : Request, res: Response) =>{
     try{
-        const {limit: queryLimit, page: page,userName} = req.query
+        const {limit: queryLimit, page: page,userName,start_date, end_date} = req.query
+
+          // Validate and parse start_date and end_date
+        let startDate: Date | null = null;
+        let endDate: Date | null = null;
+
+       if (start_date) {
+            startDate = new Date(start_date as string);
+            if (isNaN(startDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid start_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+
+        if (end_date) {
+            endDate = new Date(end_date as string);
+            if (isNaN(endDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid end_date format. Expected YYYY-MM-DD.' });
+            }
+        }
      
 
         const queryBuilder = userRepository.createQueryBuilder('user')
@@ -157,6 +175,17 @@ export const getUser = async(req : Request, res: Response) =>{
                 userName: `%${userName}%`
             })
     
+        }
+
+   // Apply date range filter if both start_date and end_date are provided
+        if (startDate && endDate) {
+            queryBuilder.andWhere(
+                'user.createdAt >= :startDate AND user.createdAt <= :endDate',
+                {
+                    startDate,
+                    endDate,
+                }
+            );
         }
 
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
