@@ -50,6 +50,28 @@ export const analyzeRekamMedis = async (req: Request, res: Response) => {
     }
 };
 
+export const checkCompleteRekamMedis = async (req: Request, res: Response) => {
+    try {
+        const rekamMedisList = await riwayatPasienRepository.find({
+            relations: ["Pasiens"]
+        });
+
+        // Filter rekam medis yang tidak memiliki nilai null atau string kosong
+        const completeRecords = rekamMedisList.filter(rekamMedis => {
+            return !Object.entries(rekamMedis).some(([key, value]) => (value === null || value === ''));
+        });
+
+        return res.status(200).json({
+            message: 'Data rekam medis yang lengkap',
+            results: { data: completeRecords }
+        });
+    } catch (error) {
+        console.error('Error checking complete rekam medis:', error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat memeriksa rekam medis yang lengkap.' });
+    }
+};
+
+
 
 export const countIncompleteRekamMedis = async (req: Request, res: Response) => {
     try {
@@ -70,10 +92,47 @@ export const countIncompleteRekamMedis = async (req: Request, res: Response) => 
     }
 };
 
+export const countCompleteRekamMedis = async (req: Request, res: Response) => {
+    try {
+        const rekamMedisList = await AppDataSource.getRepository(RiwayatPasien).find();
+
+        // Hitung jumlah rekam medis yang tidak memiliki nilai null atau string kosong
+        const totalCompleteRecords = rekamMedisList.filter(rekamMedis => {
+            return !Object.entries(rekamMedis).some(([key, value]) => (value === null || value === ''));
+        }).length;
+
+        return res.status(200).json({
+            message: 'Total data rekam medis yang lengkap',
+            total: totalCompleteRecords
+        });
+    } catch (error) {
+        console.error('Error counting complete rekam medis:', error);
+        return res.status(500).json({ message: 'Terjadi kesalahan saat menghitung rekam medis yang lengkap.' });
+    }
+};
+
+
 export const getRekamMedis = async (req: Request, res: Response) => {  
     try {  
-        const { limit: queryLimit, page: page, nomerRM } = req.query; // Mengganti namaPasien dengan nomerRM untuk mencocokkan model  
-  
+        const { limit: queryLimit, page: page, nomerRM,start_date,end_date } = req.query; // Mengganti namaPasien dengan nomerRM untuk mencocokkan model  
+
+       let startDate: Date | null = null;
+       let endDate: Date | null = null;
+
+       if (start_date) {
+            startDate = new Date(start_date as string);
+            if (isNaN(startDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid start_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+
+        if (end_date) {
+            endDate = new Date(end_date as string);
+            if (isNaN(endDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid end_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+     
         const queryBuilder = riwayatPasienRepository.createQueryBuilder('RiwayatPasien')  
             .leftJoinAndSelect('RiwayatPasien.Pasiens', 'Pasien') // Mengambil data pasien  
             .leftJoinAndSelect('RiwayatPasien.Dokters', 'Dokter') // Mengambil data dokter  
@@ -84,6 +143,16 @@ export const getRekamMedis = async (req: Request, res: Response) => {
                 nomerRM: `%${nomerRM}%`  
             });  
         }  
+   // Apply date range filter if both start_date and end_date are provided
+        if (startDate && endDate) {
+            queryBuilder.andWhere(
+                'RiwayatPasien.createdAt >= :startDate AND RiwayatPasien.createdAt <= :endDate',
+                {
+                    startDate,
+                    endDate,
+                }
+            );
+        }
   
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id });  
   
@@ -218,7 +287,6 @@ export const getRekamMedisById = async (req: Request, res: Response) => {
            rpd : rekamMedis.rpd,
            rpo : rekamMedis.rpo,
            rpk : rekamMedis.rpk,
-           vitalSignSensorium : rekamMedis.vitalSignSensorium,
            td : rekamMedis.td,
            hr : rekamMedis.hr,
            rr : rekamMedis.rr,
@@ -309,7 +377,6 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         rpd: Joi.string().optional(),  
         rpo: Joi.string().optional(),  
         rpk: Joi.string().optional(),  
-        vitalSignSensorium : Joi.string().optional(),  
         td: Joi.string().optional(),  
         hr: Joi.string().optional(),  
         rr: Joi.string().optional(),  
@@ -431,7 +498,6 @@ export const createRekamMedis = async (req: Request, res: Response) => {
         newRekamMedis.rpd = body.rpd
         newRekamMedis.rpo = body.rpo
         newRekamMedis.rpk = body.rpk
-        newRekamMedis.vitalSignSensorium = body.vitalSignSensorium
         newRekamMedis.td = body.td
         newRekamMedis.hr = body.hr
         newRekamMedis.rr = body.rr
@@ -496,7 +562,6 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         rpd: Joi.string().optional(),  
         rpo: Joi.string().optional(),  
         rpk: Joi.string().optional(),  
-        vitalSignSensorium : Joi.string().optional(),  
         td: Joi.string().optional(),  
         hr: Joi.string().optional(),  
         rr: Joi.string().optional(),  
@@ -581,7 +646,6 @@ export const updateRekamMedis = async (req : Request, res: Response) =>{
         updateRekamMedis.rpd = body.rpd
         updateRekamMedis.rpo = body.rpo
         updateRekamMedis.rpk = body.rpk
-        updateRekamMedis.vitalSignSensorium = body.vitalSignSensorium
         updateRekamMedis.td = body.td
         updateRekamMedis.hr = body.hr
         updateRekamMedis.rr = body.rr
