@@ -20,7 +20,25 @@ const riwayatPasienRepository = AppDataSource.getRepository(RiwayatPasien);
 
 export const getPasien = async (req: Request, res: Response) => {    
     try {    
-        const { limit: queryLimit, page: page, namaPasien } = req.query;    
+        const { limit: queryLimit, page: page, namaPasien,start_date, end_date} = req.query;   
+
+       let startDate: Date | null = null;
+       let endDate: Date | null = null;
+
+       if (start_date) {
+            startDate = new Date(start_date as string);
+            if (isNaN(startDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid start_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+
+        if (end_date) {
+            endDate = new Date(end_date as string);
+            if (isNaN(endDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid end_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+     
     
         const queryBuilder = pasienRepository.createQueryBuilder('Pasien')    
             .orderBy('Pasien.createdAt', 'DESC');    
@@ -29,7 +47,20 @@ export const getPasien = async (req: Request, res: Response) => {
             queryBuilder.where('Pasien.namaLengkap LIKE :namaLengkap', {    
                 namaPasien: `%${namaPasien}%`    
             });    
-        }    
+        }
+        
+        
+
+   // Apply date range filter if both start_date and end_date are provided
+        if (startDate && endDate) {
+            queryBuilder.andWhere(
+                'Pasien.createdAt >= :startDate AND Pasien.createdAt <= :endDate',
+                {
+                    startDate,
+                    endDate,
+                }
+            );
+        }
     
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id });    
     
@@ -154,8 +185,7 @@ export const createPasien = async (req: Request, res: Response) => {
         riwayatPenyakit: Joi.string().required(),
         NIK: Joi.string().required(),
         usia: Joi.number().required(),
-
-
+        kodeWilayah: Joi.string().required(),
         
     }).validate(input);
 
@@ -180,18 +210,21 @@ export const createPasien = async (req: Request, res: Response) => {
         return res.status(403).send(errorResponse('User not Authoorized', 403));  
     }  
 
-     // Query untuk mendapatkan `nomerRM` terakhir
-    const lastPasien = await pasienRepository
-    .createQueryBuilder("pasien")
-    .orderBy("pasien.nomerRM", "DESC")
-    .getOne();
-    // Hitung `nomerRM` baru
-    let nextNomerRM = "000001"; // Default jika belum ada data pasien
-    if (lastPasien) {
-        const currentNumber = parseInt(lastPasien.nomerRM, 10);
-        nextNomerRM = String(currentNumber + 1).padStart(6, "0");
-    }
+    const kodeWilayah = body.kodeWilayah;
 
+
+    // Query untuk mendapatkan `nomerRM` terakhir
+     const lastPasien = await pasienRepository
+         .createQueryBuilder("pasien")
+         .where("SUBSTRING(pasien.nomerRM, 4) != '000000'") // Menyaring nomor RM yang tidak valid
+         .orderBy("pasien.nomerRM", "DESC")
+         .getOne();
+     // Hitung `nomerRM` baru
+     let nextNomerRM = `${kodeWilayah}-000001`; // Default jika belum ada data pasien
+     if (lastPasien) {
+         const currentNumber = parseInt(lastPasien.nomerRM.split('-')[1], 10);
+         nextNomerRM = `${kodeWilayah}-${String(currentNumber + 1).padStart(6, "0")}`;
+     }
 
 
         // Membuat entitas pasien baru
