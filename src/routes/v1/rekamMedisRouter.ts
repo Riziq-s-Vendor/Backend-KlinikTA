@@ -8,7 +8,9 @@ import {
     createRekamMedis,updateRekamMedis,
     deleteRekamMedis,
     analyzeRekamMedis,
-    countIncompleteRekamMedis
+    countIncompleteRekamMedis,
+    checkCompleteRekamMedis,
+    countCompleteRekamMedis
 
 }  from '../../controller/Pasien/riwayatPasiens';
 import { countReset } from "console";
@@ -17,6 +19,8 @@ const router = Router()
 
 router.get('/analisis-rekam-medis', [checkJwt,analyzeRekamMedis])
 router.get('/count-analisis-rekam-medis', [checkJwt,countIncompleteRekamMedis])
+router.get('/complete-analisis-rekam-medis', [checkJwt,checkCompleteRekamMedis])
+router.get('/count-complete-analisis-rekam-medis', [checkJwt,countCompleteRekamMedis])
 router.get('/getRekamMedis', [checkJwt,getRekamMedis])
 router.get('/count-rekam-medis', [checkJwt,CountRekamMedis])
 router.get('/getRekamMedisById/:id',[checkJwt,getRekamMedisById])
