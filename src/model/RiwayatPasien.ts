@@ -100,13 +100,6 @@ export class RiwayatPasien{
             nullable: true
         })
         @IsString()
-        public vitalSignSensorium: string
-    
-        @Column({
-            default: null,
-            nullable: true
-        })
-        @IsString()
         public td: string
     
         @Column({
