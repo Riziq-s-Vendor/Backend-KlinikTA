@@ -8,10 +8,10 @@ export enum UserRole {
     ADMIN = 'ADMIN',
     PETUGAS = 'PETUGAS',
     DOKTER = 'DOKTER',
-    PERAWAT = 'PERAWAT'
+    PERAWAT = 'PERAWAT',
+    BIDAN = 'BIDAN',
 
 }
-
 
 @Entity()
 export class User{
@@ -50,8 +50,6 @@ export class User{
     @IsString()
     @IsUppercase()
     public role: UserRole
-
-
 
     @Column({
         default: null,
