@@ -18,7 +18,24 @@ const logActivityRepository = AppDataSource.getRepository(logActivity)
 
 export const getAllLogActivities = async (req: Request, res: Response) => {
     try {
-        const {limit : queryLimit, page: page, nomerRM} = req.query
+        const {limit : queryLimit, page: page, nomerRM,start_date,end_date} = req.query
+
+       let startDate: Date | null = null;
+       let endDate: Date | null = null;
+
+       if (start_date) {
+            startDate = new Date(start_date as string);
+            if (isNaN(startDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid start_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+
+        if (end_date) {
+            endDate = new Date(end_date as string);
+            if (isNaN(endDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid end_date format. Expected YYYY-MM-DD.' });
+            }
+        } 
 
         const userAcces = await userRepository.findOneBy({ id: req.jwtPayload.id })
 
@@ -33,6 +50,17 @@ export const getAllLogActivities = async (req: Request, res: Response) => {
             queryBuilder.where('logActivity.nomerRM LIKE :nomerRM',{
                 nomerRM : `%${nomerRM}%`
             })
+        }
+
+          // Apply date range filter if both start_date and end_date are provided
+        if (startDate && endDate) {
+            queryBuilder.andWhere(
+                'logActivity.createdAt >= :startDate AND logActivity.createdAt <= :endDate',
+                {
+                    startDate,
+                    endDate,
+                }
+            );
         }
 
         const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;
