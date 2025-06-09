@@ -23,7 +23,24 @@ const logActivityRepository = AppDataSource.getRepository(logActivity)
 
 export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {    
     try {    
-        const { limit: queryLimit, page, status, search } = req.query;    
+        const { limit: queryLimit, page, status, search,start_date,end_date } = req.query;   
+
+       let startDate: Date | null = null;
+       let endDate: Date | null = null;
+
+       if (start_date) {
+            startDate = new Date(start_date as string);
+            if (isNaN(startDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid start_date format. Expected YYYY-MM-DD.' });
+            }
+        }
+
+        if (end_date) {
+            endDate = new Date(end_date as string);
+            if (isNaN(endDate.getTime())) {
+                return res.status(400).json({ msg: 'Invalid end_date format. Expected YYYY-MM-DD.' });
+            }
+        } 
     
         const queryBuilder = peminjamanRekamMedisRepository.createQueryBuilder("peminjaman")    
             .leftJoinAndSelect("peminjaman.Dokters", "dokter")    
@@ -41,7 +58,17 @@ export const getPeminjamanRekamMedis = async (req: Request, res: Response) => {
             queryBuilder.andWhere("riwayatPasien.namaLengkap LIKE :search OR riwayatPasien.nomerRM LIKE :search", {    
                 search: `%${search}%`    
             });    
-        }    
+        } 
+          // Apply date range filter if both start_date and end_date are provided
+        if (startDate && endDate) {
+            queryBuilder.andWhere(
+                'peminjaman.createdAt >= :startDate AND peminjaman.createdAt <= :endDate',
+                {
+                    startDate,
+                    endDate,
+                }
+            );
+        }
     
         const dynamicLimit = queryLimit ? parseInt(queryLimit as string) : null;    
         const currentPage = page ? parseInt(page as string) : 1; // Convert page to number, default to 1    
