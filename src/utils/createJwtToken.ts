@@ -8,7 +8,7 @@ export const createJwtToken = (payload: JwtPayload): string => {
   })
 }
 
-
+//for deploy
 // import jwt, { SignOptions } from 'jsonwebtoken'
 // import { JwtPayload } from '../types/JwtPayload'
 // import dotenv from 'dotenv'
