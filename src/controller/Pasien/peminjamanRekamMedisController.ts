@@ -199,106 +199,90 @@ export const getPeminjamanRekamMedisById = async (req: Request, res: Response) =
 };  
 
 
-export const createPeminjamanRekamMedis = async (req : Request, res: Response) =>{
-    const createPeminjamanRekamMedisSchema = (input) => Joi.object({
-        alasanPeminjaman : Joi.string().required(),
-        tanggalDikembalikan : Joi.date().required(),
-        Dokter : Joi.string().required(),
-        RekamMedis : Joi.string().required(),
-        tanggalPeminjaman : Joi.date().required(),
-
-
-
+export const createPasien = async (req: Request, res: Response) => {
+    const createPasienSchema = (input) => Joi.object({
+        namaPasien: Joi.string().required(),
+        namaLengkap: Joi.string().required(),
+        jenisKelamin: Joi.string().required(),
+        tanggalLahir: Joi.date().required(),
+        tempatLahir: Joi.string().required(),
+        noBPJS_KIS: Joi.string().required(),
+        kecamatan: Joi.string().optional(),
+        kelurahan_desa: Joi.string().required(),
+        kabupaten: Joi.string().required(),
+        riwayatAlergi: Joi.string().required(),
+        riwayatPenyakit: Joi.string().required(),
+        NIK: Joi.string().required(),
+        usia: Joi.number().required(),
+        kodeWilayah: Joi.string().required(),
+        
     }).validate(input);
 
     try {
-        const body = req.body
-        // const schema = createPeminjamanRekamMedisSchema(req.body)
-        
+        const body = req.body;
+        // const schema = createPasienSchema(req.body);
+
+        // console.log(req.body);  
+
+
         // if ('error' in schema) {
-        //     return res.status(422).send(validationResponse(schema))
+        //     return res.status(422).send(validationResponse(schema));
         // }
 
-    const user = await userRepository.findOneBy({ id: req.jwtPayload.id })
-
-       // Validasi role pengguna yang sedang login  
-    // if (!user || user.role == 'DOKTER') {  
-    //     return res.status(403).send(errorResponse('Access Denied: Only PETUGAS and ADMIN can create Peminjaman Rekam Medis', 403));  
+        const user = await userRepository.findOneBy({ id: req.jwtPayload.id });
+      // Validasi role pengguna yang sedang login  
+    //   if (!user || user.role == 'DOKTER' ) {  
+    //     return res.status(403).send(errorResponse('Access Denied: Only ADMIN and PETUGAS can create pasiens', 403));  
     // }  
 
-    if (!user) {
-        return res.status(200).send(successResponse('User is Not Authorized', { data: user }))
-    }
-
-    const dokter = await userRepository.findOneBy({ id: body.Dokter, role: UserRole.DOKTER });  
-    if (!dokter) {  
-        return res.status(422).send(errorResponse('Invalid Dokter ID: Dokter not found', 422));  
-    } 
-
-    const RiwayatPasien = await riwayatPasienRepository.findOne({
-        where: { id: body.RekamMedis },
-        relations: { // This line is crucial
-            Pasiens: true // Include the Pasiens relation
-        }
-    });
-
-
-    if (!RiwayatPasien) {  
-        return res.status(422).send(errorResponse('Invalid Rekam Medis Pasien ID: Rekam Medis Pasien not found', 422));  
-    } 
-
-    const checkStatusRM = await riwayatPasienRepository.findOneBy({statusPeminjaman : StatusRM.TERSEDIA})
-    if (!checkStatusRM) {
-        return res.status(422).send(errorResponse('Invalid Peminajaman Rekam Medis : Rekam Medis Belum di kemablikan atau Di Pinjam', 422));  
-    }
-
-
-    const maxNoLog = await logActivityRepository
-    .createQueryBuilder("logActivity")
-    .select("MAX(logActivity.no)", "max")
-    .getRawOne();
-
-    // Hitung nomer berikutnya
-    const nextNo = (maxNoLog?.max || 0) + 1;
-
-        const newPeminjamanRekamMedis = new peminjamanRekamMedis()
-        newPeminjamanRekamMedis.alasanPeminjaman = body.alasanPeminjaman
-        newPeminjamanRekamMedis.tanggalDikembalikan = body.tanggalDikembalikan
-        newPeminjamanRekamMedis.tanggalPeminjaman = body.tanggalPeminjaman
-        newPeminjamanRekamMedis.RiwayatPasiens = RiwayatPasien
-        newPeminjamanRekamMedis.Dokters = dokter
-        await peminjamanRekamMedisRepository.save(newPeminjamanRekamMedis)
-
-        RiwayatPasien.statusPeminjaman = StatusRM.DIPINJAM; // Assuming StatusRM.DIPINJAM is the status for borrowed medical records
-        await riwayatPasienRepository.save(RiwayatPasien);
-
-
-        const newActivityLogOnCreatePeminjamanRekamMedis = new logActivity();
-        newActivityLogOnCreatePeminjamanRekamMedis.no = nextNo;
-        newActivityLogOnCreatePeminjamanRekamMedis.tanggalPeminjaman = newPeminjamanRekamMedis.tanggalPeminjaman
-        newActivityLogOnCreatePeminjamanRekamMedis.tanggalDikembalikan = newPeminjamanRekamMedis.tanggalDikembalikan
-        newActivityLogOnCreatePeminjamanRekamMedis.nomerRM = newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM; // Assuming the medical record number is the ID of RiwayatPasiens
-        newActivityLogOnCreatePeminjamanRekamMedis.waktu = new Date(); // Current time
-        newActivityLogOnCreatePeminjamanRekamMedis.Petugas = user.namaLengkap || "Unknown User"; // Handle potential null/undefined
-        newActivityLogOnCreatePeminjamanRekamMedis.Dokter = newPeminjamanRekamMedis.Dokters.namaLengkap;
-        newActivityLogOnCreatePeminjamanRekamMedis.Aksi = "MEMINJAM";
-        newActivityLogOnCreatePeminjamanRekamMedis.Deskripsi = `Dokter ${dokter.namaLengkap} meminjam rekam medis nomor ${newPeminjamanRekamMedis.RiwayatPasiens.Pasiens.nomerRM} untuk keperluan ${body.alasanPeminjaman}`;
-
-        await logActivityRepository.save(newActivityLogOnCreatePeminjamanRekamMedis);
-
-
-
+    if (!user ) {  
+        return res.status(403).send(errorResponse('User not Authoorized', 403));  
+    }  
+        const kodeWilayah = body.kodeWilayah;
         
+        const lastPasien = await pasienRepository
+            .createQueryBuilder("pasien")
+            .where("pasien.nomerRM LIKE :kodeWilayah", { kodeWilayah: `${kodeWilayah}-%` })
+            .andWhere("SUBSTRING(pasien.nomerRM, 4) != '000000'")
+            .orderBy("pasien.nomerRM", "DESC")
+            .getOne();
+        
+        let nextNomerRM = `${kodeWilayah}-000001`; // Default jika belum ada data pasien dengan kodeWilayah tsb
+        if (lastPasien) {
+            const currentNumber = parseInt(lastPasien.nomerRM.split('-')[1], 10);
+            nextNomerRM = `${kodeWilayah}-${String(currentNumber + 1).padStart(6, "0")}`;
+        }
 
 
-        console.log(newPeminjamanRekamMedis)
-        return res.status(200).send(successResponse("Create Peminjaman Rekam Medis Success", { data: newPeminjamanRekamMedis,newActivityLogOnCreatePeminjamanRekamMedis }, 200))
+        // Membuat entitas pasien baru
+        const newPasien = new Pasien();
+        newPasien.nomerRM = nextNomerRM
+        newPasien.namaPasien = body.namaPasien
+        newPasien.namaLengkap = body.namaLengkap
+        newPasien.jenisKelamin = body.jenisKelamin
+        newPasien.tanggalLahir = body.tanggalLahir
+        newPasien.tempatLahir = body.tempatLahir
+        newPasien.noBPJS_KIS = body.noBPJS_KIS
+        newPasien.kelurahan_desa = body.kelurahan_desa
+        newPasien.kecamatan = body.kecamatan
+        newPasien.kabupaten = body.kabupaten
+        newPasien.riwayatAlergi = body.riwayatAlergi
+        newPasien.riwayatPenyakit = body.riwayatPenyakit
+        newPasien.usia = body.usia
+        newPasien.NIK = body.NIK
+        await pasienRepository.save(newPasien);
 
-    }catch(error){
-        res.status(500).json({ msg: error.message })
+      
+
+        return res.status(200).send(successResponse("Create Pasien Success", {
+            data: newPasien,
+        }, 200));
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: error.message });
     }
-}
-
+};
 
 export const updateStatusPeminjamanRekamMedis = async (req : Request, res: Response) =>{
     const updateStatusPeminjamanRekamMedisSchema = (input) => Joi.object({
